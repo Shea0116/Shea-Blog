@@ -1,0 +1,40 @@
+# 直接部署仓库内已有dist文件夹 零构建无依赖终极版
+name: Deploy existing dist to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库全部源码
+        uses: actions/checkout@v4
+
+      # 【核心】直接上传你仓库里已经存在、本地打包好的dist文件夹
+      # 完全不需要云端安装pnpm/node/打包，彻底绕开所有环境报错
+      - name: 上传现成dist静态产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 部署到GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
