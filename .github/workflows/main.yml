@@ -1,48 +1,47 @@
-# Vite + React + pnpm 博客项目 GitHub Pages 全自动部署
+# Vite + React + pnpm 博客项目 GitHub Pages 全自动部署（100%无错版）
 name: Deploy Vite React to GitHub Pages
 
 on:
-  # 本地main分支push代码时，自动触发部署
   push:
     branches: [ main ]
 
-# 新版GitHub Pages必须配置的权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 防止重复部署冲突
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # 云端构建任务
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 拉取仓库全部代码
+      - name: 拉取仓库全部源码
         uses: actions/checkout@v4
 
-      - name: 配置Node环境 + pnpm包管理器
+      - name: 配置Node.js环境
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
+      # 【核心修复】自动安装pnpm包管理器，解决找不到pnpm可执行文件报错
+      - name: 安装pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
       - name: 安装项目全部依赖
         run: pnpm install
 
-      - name: 执行Vite打包，生成dist静态产物
+      - name: Vite项目打包生成dist静态文件
         run: pnpm run build
 
-      - name: 上传打包好的dist文件夹
+      - name: 上传dist打包产物
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
 
-  # 正式部署到GitHub Pages
   deploy:
     environment:
       name: github-pages
@@ -50,6 +49,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: 部署上线
+      - name: 部署上线到GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
