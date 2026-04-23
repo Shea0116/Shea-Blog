@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './Nav.css'
 
 const navLinks = [
-  { label: '关于', href: '#about' },
+  { label: '首页', href: '#' },
   { label: '技能', href: '#skills' },
   { label: '项目', href: '#projects' },
   { label: '联系', href: '#about' },
@@ -23,17 +23,36 @@ export default function Nav() {
     const sections = ['about', 'skills', 'projects']
     const observer = new IntersectionObserver(
       (entries) => {
+        let hasActiveSection = false
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id)
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+            hasActiveSection = true
+          }
         })
+        if (!hasActiveSection && window.scrollY < 100) {
+          setActiveSection('')
+        }
       },
-      { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' }
+      { threshold: 0.2, rootMargin: '-50px 0px -60% 0px' }
     )
     sections.forEach((id) => {
       const el = document.getElementById(id)
       if (el) observer.observe(el)
     })
-    return () => observer.disconnect()
+    
+    const handleScroll = () => {
+      if (window.scrollY < 100) {
+        setActiveSection('')
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   return (
@@ -48,7 +67,7 @@ export default function Nav() {
           <a
             key={link.label}
             href={link.href}
-            className={`nav__link ${activeSection === link.href.slice(1) ? 'active' : ''}`}
+            className={`nav__link ${(link.href === '#' && activeSection === '') || activeSection === link.href.slice(1) ? 'active' : ''}`}
           >
             {link.label}
           </a>
@@ -70,7 +89,7 @@ export default function Nav() {
           <a
             key={link.label}
             href={link.href}
-            className={`nav__mobile-link ${activeSection === link.href.slice(1) ? 'active' : ''}`}
+            className={`nav__mobile-link ${(link.href === '#' && activeSection === '') || activeSection === link.href.slice(1) ? 'active' : ''}`}
             onClick={() => setMenuOpen(false)}
           >
             {link.label}
