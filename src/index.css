@@ -1,0 +1,194 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* ── Brand Colors ── */
+  --black: #0a0a0a;
+  --white: #fafafa;
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+  --accent-dark: #4f46e5;
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --accent-glow-strong: rgba(99, 102, 241, 0.3);
+  --gradient-main: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.04) 100%);
+  --gradient-text: linear-gradient(135deg, #6366f1, #a78bfa);
+
+  /* ── Neutral ── */
+  --gray-50: #fafafa;
+  --gray-100: #f4f4f5;
+  --gray-200: #e4e4e7;
+  --gray-300: #d4d4d8;
+  --gray-400: #a1a1aa;
+  --gray-500: #71717a;
+  --gray-600: #52525b;
+  --gray-700: #3f3f46;
+  --gray-800: #27272a;
+  --gray-900: #18181b;
+
+  /* ── Typography ── */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-cn: 'Noto Sans SC', sans-serif;
+
+  /* ── Spacing ── */
+  --nav-height: 64px;
+  --section-padding: clamp(80px, 12vw, 160px);
+
+  /* ── Effects ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.12);
+  --shadow-accent: 0 4px 20px rgba(99,102,241,0.2);
+  --shadow-accent-lg: 0 12px 40px rgba(99,102,241,0.25);
+
+  /* ── Transitions ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 0.15s var(--ease-out);
+  --t-base: 0.3s var(--ease-out);
+  --t-slow: 0.6s var(--ease-out);
+  --t-slower: 1s var(--ease-out);
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--white);
+  color: var(--gray-900);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Noise texture overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: none;
+  border: none;
+  background: none;
+  font: inherit;
+}
+
+/* ── Scroll progress ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-main);
+  z-index: 10000;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* ── Section heading ── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.section-label.visible {
+  opacity: 1;
+  transform: none;
+}
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1.5px;
+  background: var(--gradient-main);
+  border-radius: 1px;
+}
+
+.section-title {
+  font-family: var(--font-cn);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.2;
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+}
+.section-title.visible {
+  opacity: 1;
+  transform: none;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--gray-500);
+  line-height: 1.7;
+  max-width: 520px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+}
+.section-desc.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  body {
+    cursor: auto;
+  }
+  button, a {
+    cursor: pointer;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
