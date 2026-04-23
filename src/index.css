@@ -4,6 +4,12 @@
   padding: 0;
 }
 
+/* ── Font Optimization ── */
+/* 确保字体加载优先级，使用 font-display: swap 保证文本可见性 */
+body {
+  font-display: swap;
+}
+
 :root {
   /* ── Brand Colors ── */
   --black: #0a0a0a;
@@ -73,6 +79,11 @@ body {
   font-family: var(--font-body);
   overflow-x: hidden;
   cursor: none;
+  /* 字体显示优化 */
+  font-display: swap;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ── Noise texture overlay ── */

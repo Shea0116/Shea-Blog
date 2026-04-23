@@ -42,7 +42,7 @@ export default function Hero({ isMobile }) {
 
         {/* Subtitle */}
         <p className={`hero__sub ${loaded ? 'show' : ''}`}>
-          Frontend Developer · 3年经验 · 北京
+          Frontend Developer · {(new Date().getFullYear()) - 2001}岁 · 3年经验 · 北京
         </p>
 
         {/* CTA buttons */}
