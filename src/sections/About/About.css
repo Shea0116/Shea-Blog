@@ -39,7 +39,7 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
   gap: 40px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .about__logo-container {
@@ -53,8 +53,17 @@
   width: 120px;
   height: 120px;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
   align-items: center;
   justify-content: center;
+}
+
+.about__logo-title {
+  font-family: var(--font-cn);
+  font-size: 1.6rem;
+  color: var(--gray-900);
+  font-weight: 500;
 }
 
 .about__logo img {
@@ -64,6 +73,7 @@
 }
 
 .about__left {
+  width: 90%;
   opacity: 0;
   transform: translateX(-50px) translateY(20px);
   transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);

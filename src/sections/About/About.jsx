@@ -58,12 +58,12 @@ export default function About() {
         <div className="about__logo-container">
           <div className="about__logo">
             <img src={favicon} alt="Shea Logo" />
+            <h3 className="about__logo-title">关于我</h3>
           </div>
         </div>
         
         <div className={`about__left ${visible ? 'visible' : ''}`}>
           <div className="section-label">About</div>
-          <h2 className="section-title">关于我</h2>
           <p className="about__bio">
             我是 Shea（刘庚贤），一名前端开发工程师，目前就职于滴滴，曾就职于美团。3 年间从 ToB 企业系统到 ToC 大厂核心业务均有深度参与，
             主导过 150+ 组件鸿蒙适配、医疗 SKU 招商系统等重点项目。熟练掌握 React / Vue 全家桶，
