@@ -57,7 +57,7 @@ export default function Hero({ isMobile, loaderDone }) {
         {/* Giant name — character split */}
         <div className="hero__title-wrap">
           <h1 className="hero__title hero__title--en">
-            <CharReveal text="Shea" baseDelay={0.08} />
+            <span style={{fontSize: '10rem'}}>Shea</span>
           </h1>
           <h1 className="hero__title hero__title--cn">
             <CharReveal text="刘庚贤" baseDelay={0.32} />

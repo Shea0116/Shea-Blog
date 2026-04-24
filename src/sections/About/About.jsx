@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './About.css'
 import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons';
+import favicon from '../../assets/favicon.svg';
 
 const tags = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']
 
@@ -54,6 +55,12 @@ export default function About() {
     <section className="about" id="about" ref={ref}>
       {toast && <div className="toast">{toast}</div>}
       <div className="about__inner">
+        <div className="about__logo-container">
+          <div className="about__logo">
+            <img src={favicon} alt="Shea Logo" />
+          </div>
+        </div>
+        
         <div className={`about__left ${visible ? 'visible' : ''}`}>
           <div className="section-label">About</div>
           <h2 className="section-title">关于我</h2>

@@ -8,7 +8,7 @@ const navLinks = [
   { label: '联系', href: '#about' },
 ]
 
-export default function Nav() {
+export default function Nav({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -20,7 +20,7 @@ export default function Nav() {
   }, [])
 
   useEffect(() => {
-    const sections = ['about', 'skills', 'projects']
+    const sections = ['skills', 'projects', 'about']
     const observer = new IntersectionObserver(
       (entries) => {
         let hasActiveSection = false
@@ -34,7 +34,7 @@ export default function Nav() {
           setActiveSection('')
         }
       },
-      { threshold: 0.2, rootMargin: '-50px 0px -60% 0px' }
+      { threshold: 0.2, rootMargin: '-100px 0px -50% 0px' }
     )
     sections.forEach((id) => {
       const el = document.getElementById(id)
@@ -75,6 +75,34 @@ export default function Nav() {
       </nav>
 
       <a href="#about" className="nav__contact-btn">联系我</a>
+
+      {/* 白/夜模式切换按钮 */}
+      <button
+        className="nav__theme-btn"
+        onClick={toggleTheme}
+        aria-label={theme === '' ? '切换到亮色模式' : '切换到暗色模式'}
+        title={theme === '' ? '切换到亮色模式' : '切换到暗色模式'}
+      >
+        {theme === '' ? (
+          // 月亮图标（当前是暗色/原设计，点击切换到亮色）
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        ) : (
+          // 太阳图标（当前是亮色，点击切换到暗色/原设计）
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        )}
+      </button>
 
       <button
         className={`nav__menu-btn ${menuOpen ? 'open' : ''}`}

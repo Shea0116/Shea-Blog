@@ -15,8 +15,25 @@ export default function App() {
   const [mouse, setMouse] = useState({ x: -999, y: -999 })
   const [scrollProgress, setScrollProgress] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || ''
+  })
   const rafRef = useRef(null)
   const pendingMouse = useRef({ x: -999, y: -999 })
+
+  // 主题切换
+  useEffect(() => {
+    if (theme === '') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === '' ? 'dark' : '')
+  }, [])
 
   const handleMouseMove = useCallback((e) => {
     pendingMouse.current = { x: e.clientX, y: e.clientY }
@@ -55,7 +72,7 @@ export default function App() {
       <PageLoader onComplete={() => setLoaderDone(true)} />
       <div className="scroll-progress" style={{ transform: `scaleX(${scrollProgress})` }} />
       {!isMobile && <CustomCursor mouse={mouse} />}
-      <Nav />
+      <Nav theme={theme} toggleTheme={toggleTheme} />
       <main>
         <Hero isMobile={isMobile} loaderDone={loaderDone} />
         <Marquee />

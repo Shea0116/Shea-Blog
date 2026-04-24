@@ -72,7 +72,7 @@
   inset: 0;
   border-radius: var(--radius-lg);
   padding: 1px;
-  background: rgba(255,255,255,0.07);
+  background: var(--gray-200);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -87,13 +87,12 @@
 /* Card body */
 .skill-card__content {
   position: relative;
-  background: var(--black-2);
+  background: var(--card-bg);
   border-radius: var(--radius-lg);
   padding: 36px 32px;
   height: 100%;
   z-index: 1;
 }
-
 /* Hover glow spot */
 .skill-card__content::before {
   content: '';
@@ -135,7 +134,7 @@
   border-radius: 50%;
   color: var(--gray-400);
   font-size: 1rem;
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid var(--gray-200);
   transition: all var(--t-base);
 }
 .skill-card:hover .skill-card__arrow {
@@ -165,7 +164,7 @@
   display: flex;
   gap: 20px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .skill-stat {

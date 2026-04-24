@@ -1,9 +1,9 @@
 .marquee {
   padding: 40px 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
   overflow: hidden;
-  background: #07070e;
+  background: var(--marquee-bg);
   position: relative;
 }
 
@@ -20,11 +20,11 @@
 }
 .marquee::before {
   left: 0;
-  background: linear-gradient(to right, #07070e, transparent);
+  background: linear-gradient(to right, var(--marquee-fade), transparent);
 }
 .marquee::after {
   right: 0;
-  background: linear-gradient(to left, #07070e, transparent);
+  background: linear-gradient(to left, var(--marquee-fade), transparent);
 }
 
 .marquee__track {
@@ -46,7 +46,7 @@
   font-family: var(--font-display);
   font-size: clamp(1rem, 2.2vw, 1.35rem);
   font-weight: 600;
-  color: rgba(255,255,255,0.22);
+  color: var(--gray-300);
   white-space: nowrap;
   padding: 0 28px;
   letter-spacing: 0.04em;

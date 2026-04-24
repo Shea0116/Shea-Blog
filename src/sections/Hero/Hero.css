@@ -62,8 +62,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(129,140,248,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(129,140,248,0.04) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 80px 80px;
   z-index: 1;
   mask-image: radial-gradient(ellipse 65% 65% at 50% 50%, black 10%, transparent 80%);
@@ -81,7 +81,7 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(129,140,248,0.045);
+  -webkit-text-stroke: 1px var(--ghost-stroke);
   user-select: none;
   pointer-events: none;
   z-index: 2;
@@ -127,8 +127,8 @@
   align-items: center;
   gap: 8px;
   padding: 7px 20px 7px 14px;
-  background: rgba(129,140,248,0.08);
-  border: 1px solid rgba(129,140,248,0.2);
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
   border-radius: var(--radius-full);
   font-family: var(--font-display);
   font-size: 0.72rem;
@@ -208,7 +208,7 @@
   font-size: clamp(1.6rem, 5.5vw, 4.5rem);
   font-weight: 800;
   font-style: normal;
-  color: rgba(255,255,255,0.25);
+  color: var(--cn-name-color);
   letter-spacing: 0.08em;
   margin-top: 4px;
 }
@@ -293,9 +293,9 @@
 }
 
 .hero__btn--ghost {
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid var(--btn-ghost-border);
   color: var(--gray-500);
-  background: rgba(255,255,255,0.03);
+  background: var(--btn-ghost-bg);
   backdrop-filter: blur(12px);
 }
 .hero__btn--ghost:hover {
@@ -323,7 +323,7 @@
 .hero__scroll-line {
   width: 1px;
   height: 48px;
-  background: linear-gradient(to bottom, transparent, var(--accent-light));
+  background: linear-gradient(to bottom, transparent, var(--scroll-line));
   animation: scrollPulse 2s ease-in-out infinite;
 }
 

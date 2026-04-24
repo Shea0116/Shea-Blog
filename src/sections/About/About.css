@@ -37,8 +37,30 @@
   padding: 0 40px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: start;
+  grid-template-rows: auto 1fr;
+  gap: 40px;
+  align-items: stretch;
+}
+
+.about__logo-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about__logo {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .about__left {
@@ -174,7 +196,7 @@
 
 .contact-field input,
 .contact-field textarea {
-  background: var(--gray-50);
+  background: var(--input-bg);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   padding: 10px 14px;
@@ -188,7 +210,7 @@
 .contact-field input:focus,
 .contact-field textarea:focus {
   border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-focus-bg);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
