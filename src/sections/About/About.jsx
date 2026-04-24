@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import './About.css'
+import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons';
 
-const tags = ['React', 'Vue3', 'TypeScript', 'ArkTS', 'React Native', 'Redux', 'Pinia', 'ECharts', 'SCSS', 'Python', 'Java', 'Node.js']
+const tags = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']
 
 export default function About() {
   const ref = useRef(null)
@@ -83,7 +84,7 @@ export default function About() {
 
           <div className="about__tags">
             {tags.map((t) => (
-              <span key={t} className="about__tag">{t}</span>
+              <span style={{ userSelect: 'none' }} key={t} className="about__tag">{t}</span>
             ))}
           </div>
         </div>
@@ -140,15 +141,15 @@ export default function About() {
 
           <div className="about__socials">
             <button className="social-link" onClick={() => copyToClipboard('zrdl15@163.com')}>
-              <span className="social-link__icon">✉</span>
+              <MailOutlined className="social-link__icon" />
               <span>Email</span>
             </button>
             <button className="social-link" onClick={() => copyToClipboard('https://github.com/Shea0116')}>
-              <span className="social-link__icon">⌘</span>
+              <GithubOutlined className="social-link__icon" />
               <span>GitHub</span>
             </button>
             <button className="social-link" onClick={() => copyToClipboard('GavinShea')}>
-              <span className="social-link__icon">💬</span>
+              <WechatOutlined className="social-link__icon" />
               <span>WeChat</span>
             </button>
           </div>

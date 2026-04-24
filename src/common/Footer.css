@@ -24,8 +24,13 @@
 }
 
 .footer__logo {
-  width: 28px;
-  height: 28px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.footer__logo-text {
   background: var(--gradient-main);
   color: white;
   font-family: var(--font-display);
@@ -35,6 +40,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
 }
 
 .footer__name {

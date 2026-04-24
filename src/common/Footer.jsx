@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './Footer.css'
+import sheaLogo from '../assets/Shea.png'
 
 export default function Footer() {
   const [toast, setToast] = useState('')
@@ -32,7 +33,8 @@ export default function Footer() {
       <div className="footer__inner">
         <div className="footer__top">
           <div className="footer__brand">
-            <span className="footer__logo">S</span>
+            {/* <span className="footer__logo">S</span> */}
+            <img src={sheaLogo} alt="Shea" className="footer__logo" />
             <span className="footer__name">Shea</span>
           </div>
           <p className="footer__tagline">Crafting delightful user experiences, one component at a time.</p>
