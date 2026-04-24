@@ -7,9 +7,11 @@ import Projects from './sections/Projects/Projects.jsx'
 import About from './sections/About/About.jsx'
 import Footer from './common/Footer.jsx'
 import CustomCursor from './common/CustomCursor.jsx'
+import PageLoader from './common/PageLoader.jsx'
 import './App.css'
 
 export default function App() {
+  const [loaderDone, setLoaderDone] = useState(false)
   const [mouse, setMouse] = useState({ x: -999, y: -999 })
   const [scrollProgress, setScrollProgress] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
@@ -38,7 +40,6 @@ export default function App() {
     }
   }, [handleMouseMove])
 
-  // Scroll progress
   useEffect(() => {
     const handler = () => {
       const scrollTop = window.scrollY
@@ -51,11 +52,12 @@ export default function App() {
 
   return (
     <div className="app">
+      <PageLoader onComplete={() => setLoaderDone(true)} />
       <div className="scroll-progress" style={{ transform: `scaleX(${scrollProgress})` }} />
       {!isMobile && <CustomCursor mouse={mouse} />}
       <Nav />
       <main>
-        <Hero isMobile={isMobile} />
+        <Hero isMobile={isMobile} loaderDone={loaderDone} />
         <Marquee />
         <Skills />
         <Projects />

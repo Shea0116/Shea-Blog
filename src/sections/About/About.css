@@ -43,8 +43,8 @@
 
 .about__left {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateX(-50px) translateY(20px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
 }
 .about__left.visible {
   opacity: 1;
@@ -109,8 +109,8 @@
 
 .about__right {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s;
+  transform: translateX(50px) translateY(20px);
+  transition: opacity 0.9s var(--ease-out) 0.15s, transform 0.9s var(--ease-out) 0.15s;
 }
 .about__right.visible {
   opacity: 1;
@@ -188,7 +188,7 @@
 .contact-field input:focus,
 .contact-field textarea:focus {
   border-color: var(--accent);
-  background: white;
+  background: rgba(255, 255, 255, 0.04);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
@@ -244,10 +244,10 @@
   transition: all var(--t-fast);
 }
 .social-link:hover {
-  border-color: var(--gray-900);
-  color: var(--gray-900);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: rgba(129,140,248,0.35);
+  color: var(--accent-light);
+  transform: translateY(-3px);
+  box-shadow: 0 0 24px rgba(129,140,248,0.15);
 }
 
 .social-link__icon {
