@@ -66,8 +66,7 @@ export default function About() {
           <div className="section-label">About</div>
           <p className="about__bio">
             我是 Shea（刘庚贤），一名前端开发工程师，目前就职于滴滴，曾就职于美团。3 年间从 ToB 企业系统到 ToC 大厂核心业务均有深度参与，
-            主导过 150+ 组件鸿蒙适配、医疗 SKU 招商系统等重点项目。熟练掌握 React / Vue 全家桶，
-            具备 ArkTS 跨端开发能力，持续关注前端工程化与性能优化。
+            主导过 150+ 组件鸿蒙适配、医疗 SKU 招商系统等重点项目。熟练掌握 React / Vue 全家桶，拥有Node.js、Python、Java 全栈开发能力，具备 ArkTS、React Native 移动端开发能力，持续关注前端工程化与性能优化。
           </p>
 
           <div className="about__meta">
