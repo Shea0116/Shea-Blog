@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './Footer.css'
-import sheaLogo from '../assets/Shea.png'
+import sheaLogo from '../assets/favicon.svg'
 
 export default function Footer() {
   const [toast, setToast] = useState('')

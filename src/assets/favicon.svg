@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 310" width="32" height="32">
+  <!-- Background circle -->
+  <circle cx="155" cy="155" r="155" fill="#EEEDFE"/>
+
+  <!-- Outer decorative ring -->
+  <circle cx="155" cy="155" r="148" fill="none" stroke="#534AB7" stroke-width="1" stroke-dasharray="6 4"/>
+
+  <!-- Inner ring -->
+  <circle cx="155" cy="155" r="130" fill="none" stroke="#7F77DD" stroke-width="0.5"/>
+
+  <!-- Bracket left -->
+  <path d="M55 110 L40 110 L40 200 L55 200" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bracket right -->
+  <path d="M255 110 L270 110 L270 200 L255 200" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Top accent dots -->
+  <circle cx="155" cy="13" r="4" fill="#534AB7"/>
+  <circle cx="135" cy="17" r="2.5" fill="#534AB7" opacity="0.6"/>
+  <circle cx="175" cy="17" r="2.5" fill="#534AB7" opacity="0.6"/>
+
+  <!-- Bottom accent line -->
+  <line x1="110" y1="297" x2="200" y2="297" stroke="#7F77DD" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="155" cy="297" r="3" fill="#534AB7"/>
+
+  <!-- Main "S" lettermark -->
+  <text x="155" y="192" font-family="Georgia, serif" font-size="110" font-weight="700" text-anchor="middle" fill="#26215C" letter-spacing="-2">S</text>
+
+  <!-- SHEA text -->
+  <text x="155" y="240" font-family="Georgia, serif" font-size="22" font-weight="400" text-anchor="middle" fill="#534AB7" letter-spacing="12">SHEA</text>
+</svg>
