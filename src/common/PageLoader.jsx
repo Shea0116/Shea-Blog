@@ -19,7 +19,7 @@ export default function PageLoader({ onComplete }) {
         <div className="ploader__name">
           <span className="ploader__en">Shea</span>
           <span className="ploader__dot">·</span>
-          <span className="ploader__cn">刘庚贤</span>
+          <span className="ploader__cn">贤</span>
         </div>
         <div className="ploader__track">
           <div className="ploader__fill" />

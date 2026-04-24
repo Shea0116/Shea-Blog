@@ -60,7 +60,7 @@ export default function Hero({ isMobile, loaderDone }) {
             <span style={{fontSize: '10rem'}}>Shea</span>
           </h1>
           <h1 className="hero__title hero__title--cn">
-            <CharReveal text="刘庚贤" baseDelay={0.32} />
+            <CharReveal text="贤" baseDelay={0.32} />
           </h1>
         </div>
 
