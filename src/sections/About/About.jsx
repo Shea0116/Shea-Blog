@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import emailjs from '@emailjs/browser'
 import './About.css'
 import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons';
-import favicon from '../../assets/favicon.svg';
+import favicon from '../../assets/favicon.svg'
+
+// EmailJS 配置
+const EMAILJS_SERVICE_ID = 'service_may9x8d'
+const EMAILJS_TEMPLATE_ID = 'template_tgl2uao' // 替换为你的 templateId
+const EMAILJS_PUBLIC_KEY = '1b5iFbe1XIfXRKojK';
 
 const tags = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']
 
@@ -12,6 +18,8 @@ export default function About() {
   const [sent, setSent] = useState(false)
   const [focusedField, setFocusedField] = useState(null)
   const [toast, setToast] = useState('')
+
+  const [sending, setSending] = useState(false)
 
   const showToast = (msg) => {
     setToast(msg)
@@ -44,11 +52,33 @@ export default function About() {
     return () => obs.disconnect()
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSent(true)
-    setTimeout(() => setSent(false), 3000)
-    setForm({ name: '', contact: '', message: '' })
+    if (sending) return
+    setSending(true)
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: form.name,
+          from_contact: form.contact,
+          message: form.message,
+          to_name: 'Shea',
+        },
+        EMAILJS_PUBLIC_KEY
+      )
+      setSent(true)
+      showToast('消息已发送 ✓')
+      setForm({ name: '', contact: '', message: '' })
+      setTimeout(() => setSent(false), 3000)
+    } catch (err) {
+      console.error('EmailJS 发送失败:', err)
+      showToast('发送失败，请稍后重试 ✗')
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -82,10 +112,10 @@ export default function About() {
               <span className="about__meta-label">🎓 经验</span>
               <span className="about__meta-value">3 年</span>
             </div>
-            <div className="about__meta-item">
+            {/* <div className="about__meta-item">
               <span className="about__meta-label">🏫 学历</span>
               <span className="about__meta-value">天津中德应用技术大学 · 本科</span>
-            </div>
+            </div> */}
           </div>
 
           <div className="about__tags">
@@ -118,7 +148,7 @@ export default function About() {
                 <label>联系方式</label>
                 <input
                   type="text"
-                  placeholder="邮箱 / 微信"
+                  placeholder="邮箱"
                   value={form.contact}
                   onChange={(e) => setForm({ ...form, contact: e.target.value })}
                   onFocus={() => setFocusedField('contact')}
@@ -138,9 +168,9 @@ export default function About() {
                   required
                 />
               </div>
-              <button type="submit" className={`contact-submit ${sent ? 'sent' : ''}`}>
-                {sent ? '已发送 ✓' : '发送消息'}
-                {!sent && <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              <button type="submit" className={`contact-submit ${sent ? 'sent' : ''} ${sending ? 'sending' : ''}`} disabled={sending}>
+                {sending ? '发送中...' : sent ? '已发送 ✓' : '发送消息'}
+                {!sent && !sending && <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
               </button>
             </form>
           </div>

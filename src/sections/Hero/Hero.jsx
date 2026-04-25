@@ -59,9 +59,9 @@ export default function Hero({ isMobile, loaderDone }) {
           <h1 className="hero__title hero__title--en">
             <span style={{fontSize: '10rem'}}>Shea</span>
           </h1>
-          <h1 className="hero__title hero__title--cn">
+          {/* <h1 className="hero__title hero__title--cn">
             <CharReveal text="贤" baseDelay={0.32} />
-          </h1>
+          </h1> */}
         </div>
 
         {/* Animated rule */}
