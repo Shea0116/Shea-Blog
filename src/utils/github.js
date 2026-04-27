@@ -6,15 +6,14 @@ const REPO_OWNER = 'Shea0116'
 const NOTES_REPO = 'Shea-Note'
 const BLOG_REPO = 'Shea-Blog'
 
-// GitHub PAT，用于提高 API 速率限制（60次/小时 → 5000次/小时）
-// ⚠️ 生产环境建议通过环境变量注入，不要硬编码在前端代码中
+// GitHub PAT，仅用于留言板写入（创建 Issue）
+// 读取操作不需要 token（公开仓库），避免 token 失效导致 401
+// ⚠️ 生产环境建议通过环境变量注入
 const GITHUB_TOKEN = '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'
 
-// 带认证的请求头
-function getHeaders() {
-  const headers = { 'Accept': 'application/vnd.github.v3+json' }
-  if (GITHUB_TOKEN) headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`
-  return headers
+// 读取请求头（不带认证，公开仓库不需要）
+function getReadHeaders() {
+  return { 'Accept': 'application/vnd.github.v3+json' }
 }
 
 // ── 博客文章相关 ──
@@ -25,7 +24,7 @@ function getHeaders() {
 export async function fetchNoteFiles(path = '') {
   const res = await fetch(
     `${GITHUB_API}/repos/${REPO_OWNER}/${NOTES_REPO}/contents/${path}`,
-    { headers: getHeaders() }
+    { headers: getReadHeaders() }
   )
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`)
   const data = await res.json()
@@ -46,7 +45,7 @@ export async function fetchNoteFiles(path = '') {
 export async function fetchNoteContent(path) {
   const res = await fetch(
     `${GITHUB_API}/repos/${REPO_OWNER}/${NOTES_REPO}/contents/${encodeURIComponent(path)}`,
-    { headers: getHeaders() }
+    { headers: getReadHeaders() }
   )
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`)
   const data = await res.json()
@@ -92,7 +91,7 @@ async function fetchLastCommitDate(filePath) {
   try {
     const res = await fetch(
       `${GITHUB_API}/repos/${REPO_OWNER}/${NOTES_REPO}/commits?path=${encodeURIComponent(filePath)}&per_page=1`,
-      { headers: getHeaders() }
+      { headers: getReadHeaders() }
     )
     if (res.ok) {
       const commits = await res.json()
@@ -145,7 +144,7 @@ const GUESTBOOK_TITLE_PREFIX = '留言:'
 export async function fetchGuestbookMessages() {
   const res = await fetch(
     `${GITHUB_API}/repos/${REPO_OWNER}/${BLOG_REPO}/issues?state=all&per_page=100&sort=created&direction=desc`,
-    { headers: getHeaders() }
+    { headers: getReadHeaders() }
   )
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`)
   const issues = await res.json()
