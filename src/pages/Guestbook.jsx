@@ -1,0 +1,179 @@
+import { useEffect, useRef, useState } from 'react'
+import { fetchGuestbookMessages, submitGuestbookMessage, ensureGuestbookLabel } from '../utils/github.js'
+import './Guestbook.css'
+
+// GitHub Personal Access Token（需要 repo 权限）
+// ⚠️ 安全提示：生产环境建议通过后端代理或 GitHub Actions 处理
+// 这里使用公开 token 的方式仅适用于个人博客（token 只有 repo 权限，风险可控）
+const GITHUB_TOKEN = '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'
+
+export default function Guestbook() {
+  const headingRef = useRef(null)
+  const [visible, setVisible] = useState(false)
+  const [form, setForm] = useState({ name: '', content: '' })
+  const [sending, setSending] = useState(false)
+  const [messages, setMessages] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } },
+      { threshold: 0.2 }
+    )
+    if (headingRef.current) obs.observe(headingRef.current)
+    return () => obs.disconnect()
+  }, [])
+
+  // 加载留言
+  useEffect(() => {
+    fetchGuestbookMessages()
+      .then((data) => {
+        setMessages(data)
+      })
+      .catch((err) => {
+        console.error('Failed to fetch messages:', err)
+        setError('加载留言失败')
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(''), 2500)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (sending || !form.name.trim() || !form.content.trim()) return
+
+    // 检查是否配置了 token
+    if (!GITHUB_TOKEN) {
+      showToast('留言功能暂未开放，请联系站长 ✗')
+      return
+    }
+
+    setSending(true)
+
+    try {
+      // 确保 guestbook label 存在
+      await ensureGuestbookLabel(GITHUB_TOKEN)
+
+      // 提交留言（创建 Issue）
+      const newIssue = await submitGuestbookMessage(form.name.trim(), form.content.trim(), GITHUB_TOKEN)
+
+      const newMsg = {
+        id: newIssue.number,
+        name: form.name.trim(),
+        content: form.content.trim(),
+        time: newIssue.created_at,
+        avatar: form.name.trim().charAt(0).toUpperCase(),
+      }
+      setMessages([newMsg, ...messages])
+      setForm({ name: '', content: '' })
+      showToast('留言成功 ✓')
+    } catch (err) {
+      console.error('留言发送失败:', err)
+      showToast('发送失败，请稍后重试 ✗')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  // 格式化时间
+  const formatTime = (timeStr) => {
+    try {
+      const date = new Date(timeStr)
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit',
+      })
+    } catch {
+      return timeStr
+    }
+  }
+
+  return (
+    <section className="guestbook-page">
+      {toast && <div className="toast">{toast}</div>}
+      <div className="guestbook-page__inner">
+        <div ref={headingRef} className="guestbook-page__heading">
+          <div className={`section-label ${visible ? 'visible' : ''}`}>Guestbook</div>
+          <h2 className={`section-title ${visible ? 'visible' : ''}`}>留言板</h2>
+          <p className={`section-desc ${visible ? 'visible' : ''}`}>
+            欢迎留下你的想法、建议或只是打个招呼
+          </p>
+        </div>
+
+        {/* 留言表单 */}
+        <form className="guestbook-form" onSubmit={handleSubmit}>
+          <div className="guestbook-form__row">
+            <input
+              type="text"
+              placeholder="你的昵称"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="guestbook-form__input"
+              required
+              maxLength={20}
+            />
+            <button
+              type="submit"
+              className={`guestbook-form__btn ${sending ? 'sending' : ''}`}
+              disabled={sending}
+            >
+              {sending ? '发送中...' : '留言'}
+            </button>
+          </div>
+          <textarea
+            placeholder="说点什么..."
+            value={form.content}
+            onChange={(e) => setForm({ ...form, content: e.target.value })}
+            className="guestbook-form__textarea"
+            required
+            maxLength={500}
+            rows={3}
+          />
+        </form>
+
+        {/* 留言列表 */}
+        {loading && (
+          <div className="guestbook-loading">
+            <div className="guestbook-loading__spinner" />
+            <p>正在加载留言...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="guestbook-error">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {!loading && messages.length > 0 && (
+          <div className="guestbook-list">
+            {messages.map((msg) => (
+              <div key={msg.id} className="guestbook-item">
+                <div className="guestbook-item__avatar">{msg.avatar}</div>
+                <div className="guestbook-item__body">
+                  <div className="guestbook-item__header">
+                    <span className="guestbook-item__name">{msg.name}</span>
+                    <time className="guestbook-item__time">{formatTime(msg.time)}</time>
+                  </div>
+                  <p className="guestbook-item__content">{msg.content}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && messages.length === 0 && (
+          <div className="guestbook-empty">
+            <p>还没有留言，来留下第一条吧 ✨</p>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}

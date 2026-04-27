@@ -6,7 +6,7 @@ import favicon from '../../assets/favicon.svg'
 
 // EmailJS 配置
 const EMAILJS_SERVICE_ID = 'service_may9x8d'
-const EMAILJS_TEMPLATE_ID = 'template_tgl2uao' // 替换为你的 templateId
+const EMAILJS_TEMPLATE_ID = 'template_tgl2uao'
 const EMAILJS_PUBLIC_KEY = '1b5iFbe1XIfXRKojK';
 
 const tags = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']

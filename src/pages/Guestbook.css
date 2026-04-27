@@ -1,0 +1,201 @@
+.guestbook-page {
+  padding: calc(var(--nav-height) + var(--section-padding)) 0 var(--section-padding);
+  min-height: 100vh;
+  background: var(--body-bg);
+}
+
+.guestbook-page__inner {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.guestbook-page__heading {
+  margin-bottom: 48px;
+}
+
+/* ── Form ── */
+.guestbook-form {
+  margin-bottom: 48px;
+  padding: 28px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+}
+
+.guestbook-form__row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.guestbook-form__input {
+  flex: 1;
+  padding: 12px 18px;
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  color: var(--gray-900);
+  font-family: var(--font-cn);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.guestbook-form__input::placeholder {
+  color: var(--gray-400);
+}
+.guestbook-form__input:focus {
+  border-color: rgba(129,140,248,0.4);
+  background: var(--input-focus-bg);
+}
+
+.guestbook-form__btn {
+  padding: 12px 28px;
+  background: var(--gradient-main);
+  color: white;
+  font-family: var(--font-cn);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--t-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.guestbook-form__btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-accent);
+}
+.guestbook-form__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.guestbook-form__textarea {
+  width: 100%;
+  padding: 12px 18px;
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  color: var(--gray-900);
+  font-family: var(--font-cn);
+  font-size: 0.85rem;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.guestbook-form__textarea::placeholder {
+  color: var(--gray-400);
+}
+.guestbook-form__textarea:focus {
+  border-color: rgba(129,140,248,0.4);
+  background: var(--input-focus-bg);
+}
+
+/* ── Message List ── */
+.guestbook-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guestbook-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--t-fast);
+}
+.guestbook-item:hover {
+  border-color: rgba(129,140,248,0.15);
+}
+
+.guestbook-item__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-main);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.guestbook-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.guestbook-item__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.guestbook-item__name {
+  font-family: var(--font-cn);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.guestbook-item__time {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: var(--gray-500);
+}
+
+.guestbook-item__content {
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  font-family: var(--font-cn);
+  word-break: break-word;
+}
+
+/* ── Loading / Error / Empty ── */
+.guestbook-loading,
+.guestbook-error,
+.guestbook-empty {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.guestbook-loading p,
+.guestbook-error p,
+.guestbook-empty p {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  font-family: var(--font-cn);
+}
+
+.guestbook-loading__spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--gray-200);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  animation: guestbook-spin 0.8s linear infinite;
+}
+
+@keyframes guestbook-spin {
+  to { transform: rotate(360deg); }
+}
+
+.guestbook-error p {
+  color: #ef4444;
+}
+
+@media (max-width: 768px) {
+  .guestbook-page__inner { padding: 0 20px; }
+  .guestbook-form { padding: 20px; }
+  .guestbook-form__row { flex-direction: column; }
+}

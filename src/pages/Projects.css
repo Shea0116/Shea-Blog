@@ -1,40 +1,31 @@
-.projects {
-  padding: var(--section-padding) 0;
-  background: var(--gray-50);
-  position: relative;
+.projects-page {
+  padding: calc(var(--nav-height) + var(--section-padding)) 0 var(--section-padding);
+  min-height: 100vh;
+  background: var(--body-bg);
 }
 
-/* Top edge separator */
-.projects::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(129,140,248,0.15), transparent);
-}
-
-.projects__inner {
+.projects-page__inner {
   max-width: 1140px;
   margin: 0 auto;
   padding: 0 40px;
 }
 
-.projects__heading {
+.projects-page__heading {
   margin-bottom: 64px;
 }
 
-.projects__grid {
+.projects-page__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 
-/* ── Card entrance — alternating directions ── */
+/* 复用原有 project-card 样式 */
 .project-card-wrap {
   opacity: 0;
   transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  text-decoration: none;
+  color: inherit;
 }
 .project-card-wrap:nth-child(odd)  { transform: translateX(-50px) translateY(30px) scale(0.94); }
 .project-card-wrap:nth-child(even) { transform: translateX(50px)  translateY(30px) scale(0.94); }
@@ -43,7 +34,6 @@
   transform: none;
 }
 
-/* ── Card ── */
 .project-card {
   background: var(--card-bg);
   border-radius: var(--radius-lg);
@@ -61,7 +51,6 @@
   border-color: rgba(129,140,248,0.2);
 }
 
-/* ── Preview header ── */
 .project-card__preview {
   position: relative;
   height: 190px;
@@ -77,7 +66,6 @@
   height: 210px;
 }
 
-/* Shine sweep on hover */
 .project-card__preview::after {
   content: '';
   position: absolute;
@@ -126,7 +114,6 @@
   border-radius: var(--radius-full);
 }
 
-/* ── Card body ── */
 .project-card__body {
   padding: 26px;
   flex: 1;
@@ -208,40 +195,13 @@
   gap: 12px;
 }
 
-/* ── View All Button ── */
-.projects__more {
-  display: flex;
-  justify-content: center;
-  margin-top: 48px;
-}
-
-.projects__more-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-cn);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--gray-600);
-  padding: 12px 28px;
-  border: 1px solid var(--contact-btn-border);
-  border-radius: var(--radius-full);
-  transition: all var(--t-fast);
-}
-.projects__more-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent-light);
-  box-shadow: 0 0 20px rgba(129,140,248,0.2);
-  gap: 14px;
-}
-
 @media (max-width: 900px) {
-  .projects__grid { grid-template-columns: 1fr; }
+  .projects-page__grid { grid-template-columns: 1fr; }
   .project-card-wrap:nth-child(odd),
   .project-card-wrap:nth-child(even) {
     transform: translateY(50px) scale(0.94);
   }
 }
 @media (max-width: 768px) {
-  .projects__inner { padding: 0 20px; }
+  .projects-page__inner { padding: 0 20px; }
 }

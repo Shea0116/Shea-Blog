@@ -1,17 +1,23 @@
 import { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
 import './Nav.css'
 
 const navLinks = [
-  { label: '首页', href: '#' },
-  { label: '技能', href: '#skills' },
-  { label: '项目', href: '#projects' },
-  { label: '联系', href: '#about' },
+  { label: '首页', to: '/' },
+  { label: '博客', to: '/blog' },
+  { label: '项目', to: '/projects' },
+  { label: '收藏', to: '/favorites' },
+  { label: '留言', to: '/guestbook' },
 ]
 
 export default function Nav({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false)
-  const [activeSection, setActiveSection] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // 路由切换时关闭移动端菜单
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [window.location.pathname])
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 30)
@@ -19,62 +25,27 @@ export default function Nav({ theme, toggleTheme }) {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
-  useEffect(() => {
-    const sections = ['skills', 'projects', 'about']
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let hasActiveSection = false
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-            hasActiveSection = true
-          }
-        })
-        if (!hasActiveSection && window.scrollY < 100) {
-          setActiveSection('')
-        }
-      },
-      { threshold: 0.2, rootMargin: '-100px 0px -50% 0px' }
-    )
-    sections.forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
-    
-    const handleScroll = () => {
-      if (window.scrollY < 100) {
-        setActiveSection('')
-      }
-    }
-    
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-
   return (
     <header className={`nav ${scrolled ? 'scrolled' : ''}`}>
-      <a href="/" className="nav__logo">
+      <NavLink to="/" className="nav__logo">
         <span className="nav__logo-icon">S</span>
         <span className="nav__logo-text">Shea</span>
-      </a>
+      </NavLink>
 
       <nav className="nav__links">
         {navLinks.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            className={`nav__link ${(link.href === '#' && activeSection === '') || activeSection === link.href.slice(1) ? 'active' : ''}`}
+          <NavLink
+            key={link.to}
+            to={link.to}
+            end={link.to === '/'}
+            className={({ isActive }) => `nav__link ${isActive ? 'active' : ''}`}
           >
             {link.label}
-          </a>
+          </NavLink>
         ))}
       </nav>
 
-      <a href="#about" className="nav__contact-btn">联系我</a>
+      <NavLink to="/guestbook" className="nav__contact-btn">联系我</NavLink>
 
       {/* 白/夜模式切换按钮 */}
       <button
@@ -84,12 +55,10 @@ export default function Nav({ theme, toggleTheme }) {
         title={theme === '' ? '切换到亮色模式' : '切换到暗色模式'}
       >
         {theme === '' ? (
-          // 月亮图标（当前是暗色/原设计，点击切换到亮色）
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         ) : (
-          // 太阳图标（当前是亮色，点击切换到暗色/原设计）
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="5" />
             <line x1="12" y1="1" x2="12" y2="3" />
@@ -114,16 +83,17 @@ export default function Nav({ theme, toggleTheme }) {
 
       <div className={`nav__mobile ${menuOpen ? 'open' : ''}`}>
         {navLinks.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            className={`nav__mobile-link ${(link.href === '#' && activeSection === '') || activeSection === link.href.slice(1) ? 'active' : ''}`}
+          <NavLink
+            key={link.to}
+            to={link.to}
+            end={link.to === '/'}
+            className={({ isActive }) => `nav__mobile-link ${isActive ? 'active' : ''}`}
             onClick={() => setMenuOpen(false)}
           >
             {link.label}
-          </a>
+          </NavLink>
         ))}
-        <a href="#about" className="nav__mobile-cta" onClick={() => setMenuOpen(false)}>联系我</a>
+        <NavLink to="/guestbook" className="nav__mobile-cta" onClick={() => setMenuOpen(false)}>联系我</NavLink>
       </div>
     </header>
   )

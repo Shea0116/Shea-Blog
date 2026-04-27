@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Nav from './common/Nav.jsx'
-import Hero from './sections/Hero/Hero.jsx'
-import Marquee from './sections/Marquee/Marquee.jsx'
-import Skills from './sections/Skills/Skills.jsx'
-import Projects from './sections/Projects/Projects.jsx'
-import About from './sections/About/About.jsx'
 import Footer from './common/Footer.jsx'
 import CustomCursor from './common/CustomCursor.jsx'
 import PageLoader from './common/PageLoader.jsx'
+import Home from './pages/Home.jsx'
+import Blog from './pages/Blog.jsx'
+import BlogPost from './pages/BlogPost.jsx'
+import Projects from './pages/Projects.jsx'
+import ProjectDetail from './pages/ProjectDetail.jsx'
+import Favorites from './pages/Favorites.jsx'
+import Guestbook from './pages/Guestbook.jsx'
 import './App.css'
 
 export default function App() {
@@ -20,6 +23,12 @@ export default function App() {
   })
   const rafRef = useRef(null)
   const pendingMouse = useRef({ x: -999, y: -999 })
+  const location = useLocation()
+
+  // 路由切换时滚动到顶部
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
 
   // 主题切换
   useEffect(() => {
@@ -74,11 +83,17 @@ export default function App() {
       {!isMobile && <CustomCursor mouse={mouse} />}
       <Nav theme={theme} toggleTheme={toggleTheme} />
       <main>
-        <Hero isMobile={isMobile} loaderDone={loaderDone} />
-        <Marquee />
-        <Skills />
-        <Projects />
-        <About />
+        {loaderDone && (
+          <Routes>
+            <Route path="/" element={<Home isMobile={isMobile} />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:slug" element={<ProjectDetail />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/guestbook" element={<Guestbook />} />
+          </Routes>
+        )}
       </main>
       <Footer />
     </div>
