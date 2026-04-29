@@ -18,14 +18,14 @@ function CharReveal({ text, baseDelay = 0, className = '' }) {
   )
 }
 
-export default function Hero({ isMobile, loaderDone }) {
+export default function Hero({ isMobile }) {
   const [loaded, setLoaded] = useState(false)
 
+  // 组件挂载时即触发入场动画（Home 仅在 loaderDone 后才渲染）
   useEffect(() => {
-    if (!loaderDone) return
     const t = setTimeout(() => setLoaded(true), 80)
     return () => clearTimeout(t)
-  }, [loaderDone])
+  }, [])
 
   const age = new Date().getFullYear() - 2001
 

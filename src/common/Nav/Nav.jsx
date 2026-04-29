@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import './Nav.css'
 
 const navLinks = [
@@ -13,11 +13,12 @@ const navLinks = [
 export default function Nav({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
 
   // 路由切换时关闭移动端菜单
   useEffect(() => {
     setMenuOpen(false)
-  }, [window.location.pathname])
+  }, [location.pathname])
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 30)

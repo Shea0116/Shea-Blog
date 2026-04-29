@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { projects } from './Projects.jsx'
+import { projects } from '@/pages/Projects/Projects.jsx'
 import './ProjectDetail.css'
 
 export default function ProjectDetail() {

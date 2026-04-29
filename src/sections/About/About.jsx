@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import emailjs from '@emailjs/browser'
 import './About.css'
 import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons';
-import favicon from '../../assets/favicon.svg'
+import favicon from '@/assets/favicon.svg'
 
-// EmailJS 配置
-const EMAILJS_SERVICE_ID = 'service_may9x8d'
-const EMAILJS_TEMPLATE_ID = 'template_tgl2uao'
-const EMAILJS_PUBLIC_KEY = '1b5iFbe1XIfXRKojK';
+// EmailJS 配置（通过环境变量注入）
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || ''
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || ''
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || ''
 
 const tags = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']
 

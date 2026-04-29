@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { fetchGuestbookMessages, submitGuestbookMessage, ensureGuestbookLabel } from '../utils/github.js'
+import { fetchGuestbookMessages, submitGuestbookMessage } from '@/utils/github.js'
 import './Guestbook.css'
 
-// GitHub Personal Access Token（需要 repo 权限）
-// ⚠️ 安全提示：生产环境建议通过后端代理或 GitHub Actions 处理
-// 这里使用公开 token 的方式仅适用于个人博客（token 只有 repo 权限，风险可控）
-const GITHUB_TOKEN = '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'
+// GitHub PAT 通过环境变量注入
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN || ''
 
 export default function Guestbook() {
   const headingRef = useRef(null)
@@ -57,9 +55,6 @@ export default function Guestbook() {
     setSending(true)
 
     try {
-      // 确保 guestbook label 存在
-      await ensureGuestbookLabel(GITHUB_TOKEN)
-
       // 提交留言（创建 Issue）
       const newIssue = await submitGuestbookMessage(form.name.trim(), form.content.trim(), GITHUB_TOKEN)
 

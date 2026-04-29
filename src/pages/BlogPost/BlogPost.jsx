@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { fetchPostBySlug } from '../utils/github.js'
-import { processObsidianMarkdown, estimateReadTime } from '../utils/markdown.js'
+import { fetchPostBySlug } from '@/utils/github.js'
+import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown.js'
 import './BlogPost.css'
 
 // 根据文件路径推断分类标签
