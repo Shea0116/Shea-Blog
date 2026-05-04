@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchAllPosts } from '@/utils/github.js'
+// import { fetchAllPosts } from '@/utils/github.js'
+import { fetchPosts, fetchPostBySlug } from '@/api/posts.ts'
 import './Blog.css'
 
 // 渐变色列表，用于文章封面
@@ -90,21 +91,22 @@ export default function Blog() {
   }, [])
 
   useEffect(() => {
-    fetchAllPosts()
+    fetchPosts()
       .then(async (data) => {
         // 为每篇文章获取内容以提取摘要和阅读时间
-        const { fetchNoteContent } = await import('../../utils/github.js')
-        const { extractExcerpt, estimateReadTime, processObsidianMarkdown } = await import('../../utils/markdown.js')
+        // const { fetchNoteContent } = await import('../../utils/github.js')
+        // const { extractExcerpt, estimateReadTime, processObsidianMarkdown } = await import('../../utils/markdown.js')
 
         const enriched = await Promise.all(
           data.map(async (post) => {
             try {
-              const rawContent = await fetchNoteContent(post.path)
-              const processed = processObsidianMarkdown(rawContent, post.path.split('/').slice(0, -1).join('/'))
+              // const rawContent = await fetchPostBySlug(post.slug)
+              // const processed = processObsidianMarkdown(rawContent, post.path.split('/').slice(0, -1).join('/'))
               return {
                 ...post,
-                excerpt: extractExcerpt(processed),
-                readTime: estimateReadTime(rawContent),
+                // excerpt: extractExcerpt(processed),
+                // readTime: estimateReadTime(rawContent),
+                excerpt: post.summary,
               }
             } catch {
               return {

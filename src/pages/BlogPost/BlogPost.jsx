@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { fetchPostBySlug } from '@/utils/github.js'
+// import { fetchPostBySlug } from '@/utils/github.js'
+import { fetchPostBySlug } from '@/api/posts.ts'
 import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown.js'
 import './BlogPost.css'
 
@@ -62,6 +63,12 @@ export default function BlogPost() {
       }
     }
 
+    async function getPosts() {
+      const posts = await fetchPosts()
+      console.log(posts)
+    }
+    getPosts()
+    
     if (decodedSlug) {
       loadPost()
     }
