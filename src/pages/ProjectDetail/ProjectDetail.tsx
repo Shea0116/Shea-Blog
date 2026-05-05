@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { projects } from '@/pages/Projects/Projects.jsx'
+import { projects, type Project } from '@/pages/Projects/Projects'
 import './ProjectDetail.css'
 
 export default function ProjectDetail() {
   const { slug } = useParams()
   const [visible, setVisible] = useState(false)
 
-  const project = projects.find((p) => p.slug === slug)
+  const project: Project | undefined = projects.find((p: Project) => p.slug === slug)
 
   useEffect(() => {
     setVisible(true)
@@ -44,7 +44,7 @@ export default function ProjectDetail() {
             <h1 className="project-detail-header__title">{project.title}</h1>
             <p className="project-detail-header__role">{project.role}</p>
             <div className="project-detail-header__tags">
-              {project.tags.map((t) => (
+              {project.tags.map((t: string) => (
                 <span key={t} className="project-detail-header__tag">{t}</span>
               ))}
             </div>
@@ -61,7 +61,7 @@ export default function ProjectDetail() {
             <section className="project-detail-section">
               <h2 className="project-detail-section__title">核心成果</h2>
               <ul className="project-detail-achievements">
-                {project.achievements.map((a, i) => (
+                {project.achievements.map((a: string, i: number) => (
                   <li key={i} className="project-detail-achievements__item">
                     <span className="project-detail-achievements__icon">✦</span>
                     <span>{a}</span>
@@ -74,7 +74,7 @@ export default function ProjectDetail() {
           <section className="project-detail-section">
             <h2 className="project-detail-section__title">技术栈</h2>
             <div className="project-detail-tech-stack">
-              {project.tags.map((t) => (
+              {project.tags.map((t: string) => (
                 <div key={t} className="project-detail-tech-item">
                   <span className="project-detail-tech-item__name">{t}</span>
                 </div>

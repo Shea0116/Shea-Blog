@@ -1,71 +1,67 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import './Projects.css'
+import '../Projects/Projects.css'
 
-const projects = [
+interface PreviewProject {
+  slug: string
+  title: string
+  tags: string[]
+  desc: string
+  year: string
+  gradient: string
+  highlight: string
+}
+
+interface ProjectCardProps {
+  project: PreviewProject
+  index: number
+}
+
+const previewProjects: PreviewProject[] = [
   {
     slug: 'guanlan-opinion-platform',
     title: '观澜 · 舆情智慧平台',
     tags: ['React', 'TypeScript', 'ECharts', 'Node.js'],
-    desc: '全网舆情监测与分析平台，支持多维度数据检索、情感分析与可视化大屏展示，为政府及企业提供实时舆情决策支持',
+    desc: '全网舆情监测与分析平台，支持多维度数据检索、情感分析与可视化大屏展示',
     year: '2026',
     gradient: 'linear-gradient(135deg, #6366f1, #7c3aed)',
     highlight: '滴滴',
-    role: '前端开发工程师',
-    achievements: ['多维度数据可视化大屏', '实时舆情监控与告警', '情感分析引擎前端集成'],
   },
   {
     slug: 'meituan-harmonyos-adaptation',
     title: '营销平台鸿蒙适配与工程化建设',
     tags: ['ArkTS', 'HarmonyOS', 'React', 'MSI Bridge'],
-    desc: '主导美团营销平台 150+ 组件的鸿蒙原生适配，完成 JSBridge 协议从 KNB 到 MSI 的全面迁移，建立多端编译管理与组件线上监控 SOP',
+    desc: '主导美团营销平台 150+ 组件的鸿蒙原生适配，完成 JSBridge 协议全面迁移',
     year: '2025',
     gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
     highlight: '美团',
-    role: '前端开发工程师（鸿蒙适配负责人）',
-    achievements: ['150+ 组件鸿蒙适配', 'JSBridge 协议 KNB → MSI 迁移', '组件线上监控 SOP 建立'],
   },
   {
     slug: 'meituan-medical-sku',
     title: '医疗商品 SKU 招商支撑系统',
     tags: ['React', 'Next.js', 'React Hook Form', 'Mock.js'],
-    desc: '美团医疗团购核心招商系统，开发多 SKU 动态定价模块，通过 Hook Form + useMemo 解决海量表单性能瓶颈，封装价格校验函数集规避 920 大促资损风险',
+    desc: '美团医疗团购核心招商系统，开发多 SKU 动态定价模块',
     year: '2025',
     gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
     highlight: '美团',
-    role: '前端开发工程师',
-    achievements: ['多 SKU 动态定价模块', '海量表单性能优化', '价格校验函数集（0 资损）'],
   },
   {
     slug: 'cicd-platform',
     title: 'CI/CD 持续集成部署平台',
     tags: ['Vue3', 'Element Plus', 'WebSocket', 'GoEasy'],
-    desc: '面向企业开发者的 CI/CD 平台，实现从代码提交到软件发布的全流程自动化。通过 WebSocket 实现多人协作下分支状态的实时同步',
+    desc: '面向企业开发者的 CI/CD 平台，实现从代码提交到软件发布的全流程自动化',
     year: '2024',
     gradient: 'linear-gradient(135deg, #a78bfa, #c4b5fd)',
     highlight: 'ToB',
-    role: '前端开发工程师',
-    achievements: ['全流程自动化流水线', 'WebSocket 实时协作', '多环境部署管理'],
-  },
-  {
-    slug: 'travel-management-system',
-    title: 'M 端出差管理系统',
-    tags: ['React', 'Redux', 'Ant Design Mobile', 'ECharts'],
-    desc: '企业级出差全流程申请系统，涵盖 6 大服务模块。集成高德地图 API 实现精准定位（误差 < 5m），通过骨架屏 + Canvas 分片渲染优化移动端性能',
-    year: '2023',
-    gradient: 'linear-gradient(135deg, #4f46e5, #6366f1)',
-    highlight: 'ToB',
-    role: '前端开发工程师',
-    achievements: ['高德地图精准定位', 'Canvas 分片渲染优化', '6 大服务模块完整交付'],
   },
 ]
 
-function ProjectCard({ project, index }) {
-  const ref = useRef(null)
+function ProjectCard({ project, index }: ProjectCardProps) {
+  const ref = useRef<HTMLAnchorElement>(null)
   const [visible, setVisible] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const cardRef = useRef(null)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [tilt, setTilt] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -76,7 +72,7 @@ function ProjectCard({ project, index }) {
     return () => obs.disconnect()
   }, [])
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
     const r = cardRef.current.getBoundingClientRect()
     setTilt({
@@ -105,7 +101,6 @@ function ProjectCard({ project, index }) {
           <span className="project-card__type">{project.highlight}</span>
           <span className="project-card__year">{project.year}</span>
         </div>
-
         <div className="project-card__body">
           <h3 className="project-card__title">{project.title}</h3>
           <div className="project-card__tags">
@@ -126,8 +121,8 @@ function ProjectCard({ project, index }) {
   )
 }
 
-export default function Projects() {
-  const headingRef = useRef(null)
+export default function ProjectsPreview() {
+  const headingRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -140,23 +135,27 @@ export default function Projects() {
   }, [])
 
   return (
-    <section className="projects-page">
-      <div className="projects-page__inner">
-        <div ref={headingRef} className="projects-page__heading">
+    <section className="projects" id="projects">
+      <div className="projects__inner">
+        <div ref={headingRef} className="projects__heading">
           <div className={`section-label ${visible ? 'visible' : ''}`}>Selected Work</div>
           <h2 className={`section-title ${visible ? 'visible' : ''}`}>项目经历</h2>
           <p className={`section-desc ${visible ? 'visible' : ''}`}>
             从大厂核心业务到企业级 ToB 系统，每个项目都是一次技术深度的突破
           </p>
         </div>
-        <div className="projects-page__grid">
-          {projects.map((p, i) => (
+        <div className="projects__grid">
+          {previewProjects.map((p, i) => (
             <ProjectCard key={p.slug} project={p} index={i} />
           ))}
+        </div>
+        <div className="projects__more">
+          <Link to="/projects" className="projects__more-btn">
+            查看全部项目
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </Link>
         </div>
       </div>
     </section>
   )
 }
-
-export { projects }

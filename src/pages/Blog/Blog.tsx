@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-// import { fetchAllPosts } from '@/utils/github.js'
-import { fetchPosts, fetchPostBySlug } from '@/api/posts.ts'
+// import { fetchAllPosts } from '@/utils/github'
+import { fetchPosts } from '@/api/posts'
+import type { PostMeta } from '@/api/types'
 import './Blog.css'
 
 // 渐变色列表，用于文章封面
@@ -15,8 +16,8 @@ const gradients = [
 ]
 
 // 根据文件路径推断分类标签
-function inferTags(path) {
-  const tags = []
+function inferTags(path: string): string[] {
+  const tags: string[] = []
   if (path.includes('Java')) tags.push('Java')
   if (path.includes('React') || path.includes('react')) tags.push('React')
   if (path.includes('TypeScript') || path.includes('typescript')) tags.push('TypeScript')
@@ -27,8 +28,19 @@ function inferTags(path) {
   return tags
 }
 
-function PostCard({ post, index }) {
-  const ref = useRef(null)
+interface EnrichedPost extends PostMeta {
+  readTime?: string
+  excerpt?: string
+  date?: string
+}
+
+interface PostCardProps {
+  post: EnrichedPost
+  index: number
+}
+
+function PostCard({ post, index }: PostCardProps) {
+  const ref = useRef<HTMLAnchorElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -75,9 +87,9 @@ function PostCard({ post, index }) {
 }
 
 export default function Blog() {
-  const headingRef = useRef(null)
+  const headingRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState<EnrichedPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -92,13 +104,13 @@ export default function Blog() {
 
   useEffect(() => {
     fetchPosts()
-      .then(async (data) => {
+      .then(async (data: PostMeta[]) => {
         // 为每篇文章获取内容以提取摘要和阅读时间
-        // const { fetchNoteContent } = await import('../../utils/github.js')
-        // const { extractExcerpt, estimateReadTime, processObsidianMarkdown } = await import('../../utils/markdown.js')
+        // const { fetchNoteContent } = await import('../../utils/github')
+        // const { extractExcerpt, estimateReadTime, processObsidianMarkdown } = await import('../../utils/markdown')
 
         const enriched = await Promise.all(
-          data.map(async (post) => {
+          data.map(async (post: PostMeta) => {
             try {
               // const rawContent = await fetchPostBySlug(post.slug)
               // const processed = processObsidianMarkdown(rawContent, post.path.split('/').slice(0, -1).join('/'))
@@ -119,7 +131,7 @@ export default function Blog() {
         )
         setPosts(enriched)
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error('Failed to fetch posts:', err)
         setError('加载文章列表失败，请稍后重试')
       })
@@ -158,7 +170,7 @@ export default function Blog() {
 
         {!loading && posts.length > 0 && (
           <div className="blog-page__grid">
-            {posts.map((post, i) => (
+            {posts.map((post: EnrichedPost, i: number) => (
               <PostCard key={post.slug} post={post} index={i} />
             ))}
           </div>

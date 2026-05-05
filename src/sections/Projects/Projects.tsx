@@ -1,7 +1,21 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, type MouseEvent as ReactMouseEvent } from 'react'
 import './Projects.css'
 
-const projects = [
+export interface Project {
+  title: string
+  tags: string[]
+  desc: string
+  year: string
+  gradient: string
+  highlight: string
+}
+
+interface ProjectCardProps {
+  project: Project
+  index: number
+}
+
+const projects: Project[] = [
   {
     title: '观澜 · 舆情智慧平台',
     tags: ['React', 'TypeScript', 'ECharts', 'Node.js'],
@@ -44,12 +58,12 @@ const projects = [
   },
 ]
 
-function ProjectCard({ project, index }) {
-  const ref = useRef(null)
+function ProjectCard({ project, index }: ProjectCardProps) {
+  const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const cardRef = useRef(null)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [tilt, setTilt] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -60,7 +74,7 @@ function ProjectCard({ project, index }) {
     return () => obs.disconnect()
   }, [])
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = useCallback((e: ReactMouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
     const r = cardRef.current.getBoundingClientRect()
     setTilt({
@@ -110,7 +124,7 @@ function ProjectCard({ project, index }) {
 }
 
 export default function Projects() {
-  const headingRef = useRef(null)
+  const headingRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {

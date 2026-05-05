@@ -1,6 +1,6 @@
 // src/api/posts.ts
 import request from './request'
-import type { Category, PostMeta, PostDetail } from './types.ts'
+import type { Category, PostMeta, PostDetail } from './types'
 
 /** 获取所有公开分类 */
 export const fetchCategories = (): Promise<Category[]> => {

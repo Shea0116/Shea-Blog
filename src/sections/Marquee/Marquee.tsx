@@ -1,6 +1,6 @@
 import './Marquee.css'
 
-const items = [
+const items: string[] = [
   'React', '·', 'Vue3', '·', 'TypeScript', '·', 'ArkTS', '·',
   'React Native', '·', 'HarmonyOS', '·', 'Redux', '·', 'Pinia', '·',
   'ECharts', '·', 'SCSS', '·', 'Webpack', '·', 'Vite', '·',

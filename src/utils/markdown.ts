@@ -3,18 +3,18 @@
 
 /**
  * 处理 Obsidian Markdown 内容，转换为标准格式
- * @param {string} content - 原始 Obsidian Markdown 内容
- * @param {string} basePath - 文件所在目录路径（用于解析相对图片路径）
- * @returns {string} 处理后的 Markdown 内容
+ * @param content - 原始 Obsidian Markdown 内容
+ * @param basePath - 文件所在目录路径（用于解析相对图片路径）
+ * @returns 处理后的 Markdown 内容
  */
-export function processObsidianMarkdown(content, basePath = '') {
+export function processObsidianMarkdown(content: string, basePath: string = ''): string {
   let processed = content
 
   // 1. 转换 Obsidian wiki-link 图片语法: ![[image.png|width]] → 标准格式
   //    由于图片在 GitHub 仓库中，转换为 GitHub raw URL
   processed = processed.replace(
     /!\[\[([^\]|]+?)(?:\|(\d+))?\]\]/g,
-    (match, filename, width) => {
+    (_match: string, filename: string, width: string) => {
       const rawUrl = `https://raw.githubusercontent.com/Shea0116/Shea-Note/main/${basePath ? basePath + '/' : ''}${filename}`
       if (width) {
         return `![${filename}](${rawUrl}){width=${width}}`
@@ -26,7 +26,7 @@ export function processObsidianMarkdown(content, basePath = '') {
   // 2. 转换 Obsidian wiki-link 双向链接: [[文件名]] → 文件名
   processed = processed.replace(
     /\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]/g,
-    (match, filename, alias) => {
+    (_match: string, filename: string, alias: string) => {
       return alias || filename
     }
   )
@@ -44,8 +44,8 @@ export function processObsidianMarkdown(content, basePath = '') {
   // 5. 处理 Obsidian callout 语法: > [!note] → 引用块
   processed = processed.replace(
     /^>\s*\[!(\w+)\]\s*(.*)$/gm,
-    (match, type, content) => {
-      const typeMap = {
+    (_match: string, type: string, content: string) => {
+      const typeMap: Record<string, string> = {
         note: '📝 笔记',
         tip: '💡 提示',
         important: '⚠️ 重要',
@@ -63,11 +63,10 @@ export function processObsidianMarkdown(content, basePath = '') {
 
 /**
  * 从 Markdown 内容中提取第一段作为摘要
- * @param {string} content - Markdown 内容
- * @param {number} maxLength - 最大长度，默认 120
- * @returns {string}
+ * @param content - Markdown 内容
+ * @param maxLength - 最大长度，默认 120
  */
-export function extractExcerpt(content, maxLength = 120) {
+export function extractExcerpt(content: string, maxLength: number = 120): string {
   // 移除代码块
   let text = content.replace(/```[\s\S]*?```/g, '')
   // 移除图片
@@ -91,10 +90,10 @@ export function extractExcerpt(content, maxLength = 120) {
 
 /**
  * 估算阅读时间
- * @param {string} content - Markdown 内容
- * @returns {string} 如 "5 min"
+ * @param content - Markdown 内容
+ * @returns 如 "5 min"
  */
-export function estimateReadTime(content) {
+export function estimateReadTime(content: string): string {
   // 移除代码块（代码阅读速度不同）
   const textOnly = content.replace(/```[\s\S]*?```/g, '')
   // 中文字符数 + 英文单词数

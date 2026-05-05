@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import Nav from '@/common/Nav/Nav.jsx'
-import Footer from '@/common/Footer/Footer.jsx'
-import CustomCursor from '@/common/CustomCursor/CustomCursor.jsx'
-import PageLoader from '@/common/PageLoader/PageLoader.jsx'
-import Home from '@/pages/Home/Home.jsx'
-import Blog from '@/pages/Blog/Blog.jsx'
-import BlogPost from '@/pages/BlogPost/BlogPost.jsx'
-import Projects from '@/pages/Projects/Projects.jsx'
-import ProjectDetail from '@/pages/ProjectDetail/ProjectDetail.jsx'
-import Favorites from '@/pages/Favorites/Favorites.jsx'
-import Guestbook from '@/pages/Guestbook/Guestbook.jsx'
+import Nav from '@/common/Nav/Nav'
+import Footer from '@/common/Footer/Footer'
+import CustomCursor from '@/common/CustomCursor/CustomCursor'
+import PageLoader from '@/common/PageLoader/PageLoader'
+import Home from '@/pages/Home/Home'
+import Blog from '@/pages/Blog/Blog'
+import BlogPost from '@/pages/BlogPost/BlogPost'
+import Projects from '@/pages/Projects/Projects'
+import ProjectDetail from '@/pages/ProjectDetail/ProjectDetail'
+import Favorites from '@/pages/Favorites/Favorites'
+import Guestbook from '@/pages/Guestbook/Guestbook'
 import './App.css'
 
 export default function App() {
@@ -21,7 +21,7 @@ export default function App() {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || ''
   })
-  const rafRef = useRef(null)
+  const rafRef = useRef<number | null>(null)
   const pendingMouse = useRef({ x: -999, y: -999 })
   const location = useLocation()
 
@@ -44,7 +44,7 @@ export default function App() {
     setTheme(prev => prev === '' ? 'dark' : '')
   }, [])
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     pendingMouse.current = { x: e.clientX, y: e.clientY }
     if (!rafRef.current) {
       rafRef.current = requestAnimationFrame(() => {

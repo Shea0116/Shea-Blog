@@ -1,7 +1,32 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import './Skills.css'
 
-const skills = [
+interface Stat {
+  value: number
+  suffix: string
+  label: string
+}
+
+interface Skill {
+  id: string
+  icon: string
+  title: string
+  desc: string
+  stats: Stat[]
+}
+
+interface AnimatedNumberProps {
+  value: number
+  suffix: string
+  visible: boolean
+}
+
+interface SkillCardProps {
+  skill: Skill
+  index: number
+}
+
+const skills: Skill[] = [
   {
     id: 'FE',
     icon: '🎨',
@@ -37,7 +62,7 @@ const skills = [
   },
 ]
 
-function AnimatedNumber({ value, suffix, visible }) {
+function AnimatedNumber({ value, suffix, visible }: AnimatedNumberProps) {
   const [current, setCurrent] = useState(0)
   const hasAnimated = useRef(false)
 
@@ -46,7 +71,7 @@ function AnimatedNumber({ value, suffix, visible }) {
     hasAnimated.current = true
     const duration = 1500
     const start = performance.now()
-    const step = (now) => {
+    const step = (now: number) => {
       const p = Math.min((now - start) / duration, 1)
       const eased = 1 - Math.pow(1 - p, 4)
       setCurrent(Math.round(eased * value * 10) / 10)
@@ -58,10 +83,10 @@ function AnimatedNumber({ value, suffix, visible }) {
   return <span>{Number.isInteger(value) ? current : current.toFixed(1)}{suffix}</span>
 }
 
-function SkillCard({ skill, index }) {
-  const ref = useRef(null)
+function SkillCard({ skill, index }: SkillCardProps) {
+  const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const cardRef = useRef(null)
+  const cardRef = useRef<HTMLDivElement>(null)
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -73,7 +98,7 @@ function SkillCard({ skill, index }) {
     return () => obs.disconnect()
   }, [])
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
     const r = cardRef.current.getBoundingClientRect()
     setTilt({
@@ -120,7 +145,7 @@ function SkillCard({ skill, index }) {
 }
 
 export default function Skills() {
-  const headingRef = useRef(null)
+  const headingRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {

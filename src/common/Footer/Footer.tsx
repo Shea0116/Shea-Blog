@@ -5,12 +5,12 @@ import sheaLogo from '@/assets/favicon.svg'
 export default function Footer() {
   const [toast, setToast] = useState('')
 
-  const showToast = (msg) => {
+  const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(''), 2000)
   }
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
       showToast('复制成功 ✓')

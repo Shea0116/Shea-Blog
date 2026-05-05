@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import emailjs from '@emailjs/browser'
 import './About.css'
 import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons';
@@ -9,24 +9,24 @@ const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || ''
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || ''
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || ''
 
-const tags = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']
+const tags: string[] = ['React', 'Vue3', 'TypeScript', 'Node.js', 'Python', 'Java', 'React Native', 'ArkTS', 'Redux', 'Pinia', 'ECharts', 'SCSS']
 
 export default function About() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
-  const [form, setForm] = useState({ name: '', contact: '', message: '' })
+  const [form, setForm] = useState<{ name: string; contact: string; message: string }>({ name: '', contact: '', message: '' })
   const [sent, setSent] = useState(false)
-  const [focusedField, setFocusedField] = useState(null)
+  const [focusedField, setFocusedField] = useState<string | null>(null)
   const [toast, setToast] = useState('')
 
   const [sending, setSending] = useState(false)
 
-  const showToast = (msg) => {
+  const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(''), 2000)
   }
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
       showToast('复制成功 ✓')
@@ -52,7 +52,7 @@ export default function About() {
     return () => obs.disconnect()
   }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (sending) return
     setSending(true)

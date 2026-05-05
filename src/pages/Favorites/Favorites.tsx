@@ -1,7 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import './Favorites.css'
 
-const categories = [
+interface FavoriteItem {
+  name: string
+  desc: string
+  link?: string
+}
+
+interface Category {
+  title: string
+  icon: string
+  items: FavoriteItem[]
+}
+
+interface CategorySectionProps {
+  category: Category
+  index: number
+}
+
+const categories: Category[] = [
   {
     title: '开发工具',
     icon: '⚡',
@@ -46,9 +63,9 @@ const categories = [
   },
 ]
 
-function CategorySection({ category, index }) {
-  const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
+function CategorySection({ category, index }: CategorySectionProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState<boolean>(false)
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -96,8 +113,8 @@ function CategorySection({ category, index }) {
 }
 
 export default function Favorites() {
-  const headingRef = useRef(null)
-  const [visible, setVisible] = useState(false)
+  const headingRef = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState<boolean>(false)
 
   useEffect(() => {
     const obs = new IntersectionObserver(

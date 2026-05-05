@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 import './PageLoader.css'
 
-export default function PageLoader({ onComplete }) {
-  const [phase, setPhase] = useState('hold') // 'hold' | 'exit'
+interface PageLoaderProps {
+  onComplete: () => void
+}
+
+export default function PageLoader({ onComplete }: PageLoaderProps) {
+  const [phase, setPhase] = useState<'hold' | 'exit'>('hold')
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('exit'), 1700)

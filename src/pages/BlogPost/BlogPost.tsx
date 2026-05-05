@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-// import { fetchPostBySlug } from '@/utils/github.js'
-import { fetchPostBySlug } from '@/api/posts.ts'
-import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown.js'
+// import { fetchPostBySlug } from '@/utils/github'
+import { fetchPostBySlug } from '@/api/posts'
+import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown'
+import type { PostDetail } from '@/api/types'
 import './BlogPost.css'
 
 // 根据文件路径推断分类标签
-function inferTags(path) {
-  const tags = []
+function inferTags(path: string): string[] {
+  const tags: string[] = []
   if (path.includes('Java')) tags.push('Java')
   if (path.includes('React') || path.includes('react')) tags.push('React')
   if (path.includes('TypeScript') || path.includes('typescript')) tags.push('TypeScript')
@@ -18,11 +19,20 @@ function inferTags(path) {
   return tags
 }
 
+interface PostInfo {
+  slug: string
+  title: string
+  path: string
+  date?: string
+  tags: string[]
+  readTime: string
+}
+
 export default function BlogPost() {
   const { slug } = useParams()
-  const decodedSlug = decodeURIComponent(slug)
+  const decodedSlug = decodeURIComponent(slug || '')
   const [visible, setVisible] = useState(false)
-  const [post, setPost] = useState(null)
+  const [post, setPost] = useState<PostInfo | null>(null)
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -35,7 +45,7 @@ export default function BlogPost() {
     async function loadPost() {
       try {
         // 直接通过 slug 获取文章（轻量，不需要先获取全部列表）
-        const data = await fetchPostBySlug(decodedSlug)
+        const data: PostDetail = await fetchPostBySlug(decodedSlug)
 
         if (!data) {
           setError('not_found')
@@ -50,7 +60,7 @@ export default function BlogPost() {
           slug: decodedSlug,
           title: data.title,
           path: data.path,
-          date: data.date,
+          date: (data as unknown as { date?: string }).date,
           tags: inferTags(data.path),
           readTime: estimateReadTime(data.content),
         })
@@ -63,12 +73,6 @@ export default function BlogPost() {
       }
     }
 
-    async function getPosts() {
-      const posts = await fetchPosts()
-      console.log(posts)
-    }
-    getPosts()
-    
     if (decodedSlug) {
       loadPost()
     }
@@ -122,7 +126,7 @@ export default function BlogPost() {
 
         <header className="blog-post-header">
           <div className="blog-post-header__tags">
-            {post.tags.map((t) => (
+            {post.tags.map((t: string) => (
               <span key={t} className="blog-post-header__tag">{t}</span>
             ))}
           </div>

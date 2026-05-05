@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import './Nav.css'
 
-const navLinks = [
+const navLinks: { label: string; to: string }[] = [
   { label: '首页', to: '/' },
   { label: '博客', to: '/blog' },
   { label: '项目', to: '/projects' },
@@ -10,7 +10,12 @@ const navLinks = [
   { label: '留言', to: '/guestbook' },
 ]
 
-export default function Nav({ theme, toggleTheme }) {
+interface NavProps {
+  theme: string
+  toggleTheme: () => void
+}
+
+export default function Nav({ theme, toggleTheme }: NavProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()

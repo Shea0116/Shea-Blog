@@ -1,20 +1,29 @@
 import { useRef, useEffect, useState } from 'react'
 import './CustomCursor.css'
 
+interface MousePosition {
+  x: number
+  y: number
+}
+
+interface CustomCursorProps {
+  mouse: MousePosition
+}
+
 const LERP = 0.12
 
-export default function CustomCursor({ mouse }) {
-  const dotRef = useRef(null)
-  const ringRef = useRef(null)
+export default function CustomCursor({ mouse }: CustomCursorProps) {
+  const dotRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
   const dotPos = useRef({ x: -100, y: -100 })
   const ringPos = useRef({ x: -100, y: -100 })
-  const [dotStyle, setDotStyle] = useState({})
-  const [ringStyle, setRingStyle] = useState({})
+  const [dotStyle, setDotStyle] = useState<React.CSSProperties>({})
+  const [ringStyle, setRingStyle] = useState<React.CSSProperties>({})
   const [isHovering, setIsHovering] = useState(false)
   const [isClicking, setIsClicking] = useState(false)
 
   useEffect(() => {
-    let animId
+    let animId: number
     const animate = () => {
       dotPos.current.x += (mouse.x - dotPos.current.x) * 0.25
       dotPos.current.y += (mouse.y - dotPos.current.y) * 0.25
@@ -36,8 +45,8 @@ export default function CustomCursor({ mouse }) {
   }, [mouse, isHovering, isClicking])
 
   useEffect(() => {
-    const handleOver = (e) => {
-      const target = e.target.closest('a, button, [data-cursor="pointer"], .skill-card, .project-card, .about-tag, .link-item, .submit-btn')
+    const handleOver = (e: MouseEvent) => {
+      const target = (e.target as Element).closest('a, button, [data-cursor="pointer"], .skill-card, .project-card, .about-tag, .link-item, .submit-btn')
       setIsHovering(!!target)
     }
     const handleDown = () => setIsClicking(true)

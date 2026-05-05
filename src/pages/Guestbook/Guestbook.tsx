@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
-import { fetchGuestbookMessages, submitGuestbookMessage } from '@/utils/github.js'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { fetchGuestbookMessages, submitGuestbookMessage, type GuestbookMessage } from '@/utils/github'
 import './Guestbook.css'
 
 // GitHub PAT 通过环境变量注入
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN || ''
 
 export default function Guestbook() {
-  const headingRef = useRef(null)
-  const [visible, setVisible] = useState(false)
-  const [form, setForm] = useState({ name: '', content: '' })
-  const [sending, setSending] = useState(false)
-  const [messages, setMessages] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [toast, setToast] = useState('')
+  const headingRef = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState<boolean>(false)
+  const [form, setForm] = useState<{ name: string; content: string }>({ name: '', content: '' })
+  const [sending, setSending] = useState<boolean>(false)
+  const [messages, setMessages] = useState<GuestbookMessage[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>('')
+  const [toast, setToast] = useState<string>('')
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -27,22 +27,26 @@ export default function Guestbook() {
   // 加载留言
   useEffect(() => {
     fetchGuestbookMessages()
-      .then((data) => {
-        setMessages(data)
+      .then((res) => {
+        if (res.code === 200) {
+          setMessages(res.data)
+        } else {
+          setError('加载留言失败')
+        }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error('Failed to fetch messages:', err)
         setError('加载留言失败')
       })
       .finally(() => setLoading(false))
   }, [])
 
-  const showToast = (msg) => {
+  const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(''), 2500)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (sending || !form.name.trim() || !form.content.trim()) return
 
@@ -56,13 +60,18 @@ export default function Guestbook() {
 
     try {
       // 提交留言（创建 Issue）
-      const newIssue = await submitGuestbookMessage(form.name.trim(), form.content.trim(), GITHUB_TOKEN)
+      const result = await submitGuestbookMessage(form.name.trim(), form.content.trim(), GITHUB_TOKEN)
 
-      const newMsg = {
-        id: newIssue.number,
+      if (result.code !== 200 || !result.data) {
+        showToast('发送失败，请稍后重试 ✗')
+        return
+      }
+
+      const newMsg: GuestbookMessage = {
+        id: result.data.number,
         name: form.name.trim(),
         content: form.content.trim(),
-        time: newIssue.created_at,
+        createdAt: result.data.created_at,
         avatar: form.name.trim().charAt(0).toUpperCase(),
       }
       setMessages([newMsg, ...messages])
@@ -77,7 +86,7 @@ export default function Guestbook() {
   }
 
   // 格式化时间
-  const formatTime = (timeStr) => {
+  const formatTime = (timeStr: string) => {
     try {
       const date = new Date(timeStr)
       return date.toLocaleString('zh-CN', {
@@ -148,13 +157,13 @@ export default function Guestbook() {
 
         {!loading && messages.length > 0 && (
           <div className="guestbook-list">
-            {messages.map((msg) => (
+            {messages.map((msg: GuestbookMessage) => (
               <div key={msg.id} className="guestbook-item">
                 <div className="guestbook-item__avatar">{msg.avatar}</div>
                 <div className="guestbook-item__body">
                   <div className="guestbook-item__header">
                     <span className="guestbook-item__name">{msg.name}</span>
-                    <time className="guestbook-item__time">{formatTime(msg.time)}</time>
+                    <time className="guestbook-item__time">{formatTime(msg.createdAt)}</time>
                   </div>
                   <p className="guestbook-item__content">{msg.content}</p>
                 </div>

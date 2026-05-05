@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react'
 import './Hero.css'
 
-function CharReveal({ text, baseDelay = 0, className = '' }) {
+interface CharRevealProps {
+  text: string
+  baseDelay?: number
+  className?: string
+}
+
+interface HeroProps {
+  isMobile: boolean
+}
+
+export function CharReveal({ text, baseDelay = 0, className = '' }: CharRevealProps) {
   return (
     <span className={`char-group ${className}`}>
       {[...text].map((ch, i) => (
@@ -18,8 +28,9 @@ function CharReveal({ text, baseDelay = 0, className = '' }) {
   )
 }
 
-export default function Hero({ isMobile }) {
+export default function Hero({ isMobile }: HeroProps) {
   const [loaded, setLoaded] = useState(false)
+  void isMobile
 
   // 组件挂载时即触发入场动画（Home 仅在 loaderDone 后才渲染）
   useEffect(() => {
