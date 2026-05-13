@@ -48,6 +48,10 @@
 }
 
 /* ── Header ── */
+.project-detail-header {
+  margin-bottom: 40px;
+}
+
 .project-detail-header__cover {
   position: relative;
   height: 240px;

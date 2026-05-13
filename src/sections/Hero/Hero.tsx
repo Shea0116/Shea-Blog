@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './Hero.css'
-
+import { getAbout } from '@/api/posts'
+import type { About } from '@/api/types'
 interface CharRevealProps {
   text: string
   baseDelay?: number
@@ -30,6 +31,12 @@ export function CharReveal({ text, baseDelay = 0, className = '' }: CharRevealPr
 
 export default function Hero({ isMobile }: HeroProps) {
   const [loaded, setLoaded] = useState(false)
+  const [about, setAbout] = useState<About>()
+
+  useEffect(() => {
+    getAbout().then(setAbout)
+  }, [])
+
   void isMobile
 
   // 组件挂载时即触发入场动画（Home 仅在 loaderDone 后才渲染）
@@ -37,8 +44,6 @@ export default function Hero({ isMobile }: HeroProps) {
     const t = setTimeout(() => setLoaded(true), 80)
     return () => clearTimeout(t)
   }, [])
-
-  const age = new Date().getFullYear() - 2001
 
   return (
     <section className="hero">
@@ -80,7 +85,7 @@ export default function Hero({ isMobile }: HeroProps) {
 
         {/* Subtitle */}
         <p className={`hero__sub ${loaded ? 'show' : ''}`}>
-          Frontend Developer&nbsp;&nbsp;·&nbsp;&nbsp;{age}岁&nbsp;&nbsp;·&nbsp;&nbsp;3年经验&nbsp;&nbsp;·&nbsp;&nbsp;北京
+          Frontend Developer&nbsp;&nbsp;·&nbsp;&nbsp;{about?.age}岁&nbsp;&nbsp;·&nbsp;&nbsp;{about?.experience}年经验&nbsp;&nbsp;·&nbsp;&nbsp;{about?.base_location}
         </p>
 
         {/* CTA */}

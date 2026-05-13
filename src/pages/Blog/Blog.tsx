@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 // import { fetchAllPosts } from '@/utils/github'
 import { fetchPosts } from '@/api/posts'
-import type { PostMeta } from '@/api/types'
+import type { PostMeta, PostsApiResponse } from '@/api/types'
 import './Blog.css'
 
 // 渐变色列表，用于文章封面
@@ -34,23 +34,43 @@ interface EnrichedPost extends PostMeta {
   date?: string
 }
 
+interface CategorySection {
+  category: string
+  categoryName: string
+  posts: EnrichedPost[]
+}
+
 interface PostCardProps {
   post: EnrichedPost
   index: number
+  onVisibilityChange?: (index: number, isVisible: boolean) => void
+  postRef?: (el: HTMLAnchorElement | null) => void
 }
 
-function PostCard({ post, index }: PostCardProps) {
+function PostCard({ post, index, onVisibilityChange, postRef }: PostCardProps) {
   const ref = useRef<HTMLAnchorElement>(null)
+
+  useEffect(() => {
+    if (postRef) {
+      postRef(ref.current)
+    }
+  }, [postRef])
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } },
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true)
+          onVisibilityChange?.(index, true)
+          obs.disconnect()
+        }
+      },
       { threshold: 0.1 }
     )
     if (ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
-  }, [])
+  }, [index, onVisibilityChange])
 
   const gradient = gradients[index % gradients.length]
   const tags = inferTags(post.path)
@@ -86,12 +106,30 @@ function PostCard({ post, index }: PostCardProps) {
   )
 }
 
+// 分类名称映射
+const categoryNameMap: Record<string, string> = {
+  frontend: 'Frontend',
+  backend: 'Backend',
+  others: 'Others',
+}
+
 export default function Blog() {
   const headingRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [posts, setPosts] = useState<EnrichedPost[]>([])
+  const [categorySections, setCategorySections] = useState<CategorySection[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showToc, setShowToc] = useState(false)
+  const [showBackToTop, setShowBackToTop] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const postRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
+
+  const handleVisibilityChange = useCallback((index: number, isVisible: boolean) => {
+    if (isVisible) {
+      setShowBackToTop(true)
+    }
+  }, [])
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -103,33 +141,43 @@ export default function Blog() {
   }, [])
 
   useEffect(() => {
-    fetchPosts()
-      .then(async (data: PostMeta[]) => {
-        // 为每篇文章获取内容以提取摘要和阅读时间
-        // const { fetchNoteContent } = await import('../../utils/github')
-        // const { extractExcerpt, estimateReadTime, processObsidianMarkdown } = await import('../../utils/markdown')
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-        const enriched = await Promise.all(
-          data.map(async (post: PostMeta) => {
-            try {
-              // const rawContent = await fetchPostBySlug(post.slug)
-              // const processed = processObsidianMarkdown(rawContent, post.path.split('/').slice(0, -1).join('/'))
-              return {
-                ...post,
-                // excerpt: extractExcerpt(processed),
-                // readTime: estimateReadTime(rawContent),
-                excerpt: post.summary,
-              }
-            } catch {
-              return {
-                ...post,
-                excerpt: '点击阅读全文...',
-                readTime: '5 min',
-              }
+  useEffect(() => {
+    fetchPosts()
+      .then(async (response: PostsApiResponse[]) => {
+        // 按分类组织文章，保留分类信息
+        const sections: CategorySection[] = await Promise.all(
+          response.map(async (item) => {
+            const enrichedPosts = await Promise.all(
+              item.posts.map(async (post: PostMeta) => {
+                try {
+                  return {
+                    ...post,
+                    excerpt: post.summary,
+                  }
+                } catch {
+                  return {
+                    ...post,
+                    excerpt: '点击阅读全文...',
+                    readTime: '5 min',
+                  }
+                }
+              })
+            )
+            return {
+              category: item.category,
+              categoryName: categoryNameMap[item.category.toLowerCase()] || item.category,
+              posts: enrichedPosts,
             }
           })
         )
-        setPosts(enriched)
+        setCategorySections(sections)
       })
       .catch((err: unknown) => {
         console.error('Failed to fetch posts:', err)
@@ -137,6 +185,25 @@ export default function Blog() {
       })
       .finally(() => setLoading(false))
   }, [])
+
+  const scrollToSection = (category: string) => {
+    setSelectedCategory(category)
+  }
+
+  const scrollToPost = (slug: string) => {
+    const post = postRefs.current[slug]
+    if (post) {
+      const offset = 100
+      const top = post.getBoundingClientRect().top + window.scrollY - offset
+      window.scrollTo({ top, behavior: 'smooth' })
+    }
+    setShowToc(false)
+    setSelectedCategory(null)
+  }
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <section className="blog-page">
@@ -162,20 +229,115 @@ export default function Blog() {
           </div>
         )}
 
-        {!loading && !error && posts.length === 0 && (
+        {!loading && !error && categorySections.length === 0 && (
           <div className="blog-page__empty">
             <p>暂无文章，敬请期待 ✨</p>
           </div>
         )}
 
-        {!loading && posts.length > 0 && (
-          <div className="blog-page__grid">
-            {posts.map((post: EnrichedPost, i: number) => (
-              <PostCard key={post.slug} post={post} index={i} />
-            ))}
-          </div>
+        {!loading && categorySections.length > 0 && (
+          <>
+            <div className="blog-page__toc-toggle" onClick={() => setShowToc(!showToc)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </div>
+
+            {showToc && (
+              <>
+                <div className="blog-page__toc-overlay" onClick={() => { setShowToc(false); setSelectedCategory(null); }} />
+                <div className="blog-page__toc-wrapper">
+                  <div className={`blog-page__toc ${selectedCategory ? 'blog-page__toc--shrink' : ''}`}>
+                    <div className="blog-page__toc-header">
+                      <span>目录</span>
+                      <button className="blog-page__toc-close" onClick={() => { setShowToc(false); setSelectedCategory(null); }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    </div>
+                    <ul className="blog-page__toc-list">
+                      {categorySections.map((section) => (
+                        <li 
+                          key={section.category} 
+                          onClick={() => scrollToSection(section.category)}
+                          className={selectedCategory === section.category ? 'active' : ''}
+                        >
+                          {section.categoryName}
+                          <span className="blog-page__toc-count">{section.posts.length}</span>
+                          <svg className="blog-page__toc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {selectedCategory && (
+                    <div className="blog-page__toc-sub">
+                      <div className="blog-page__toc-sub-header">
+                        <button className="blog-page__toc-sub-back" onClick={() => setSelectedCategory(null)}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="15 18 9 12 15 6" />
+                          </svg>
+                        </button>
+                        <span>{categorySections.find(s => s.category === selectedCategory)?.categoryName}</span>
+                      </div>
+                      <ul className="blog-page__toc-sub-list">
+                        {categorySections
+                          .find(s => s.category === selectedCategory)
+                          ?.posts.map((post, index) => (
+                            <li key={post.slug} onClick={() => scrollToPost(post.slug)}>
+                              <span className="blog-page__toc-sub-index">{index + 1}</span>
+                              <span className="blog-page__toc-sub-title">{post.title}</span>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            <div className="blog-page__sections">
+              {categorySections.map((section, sectionIndex) => (
+                <div
+                  key={section.category}
+                  className="blog-page__section"
+                  ref={(el) => { sectionRefs.current[section.category] = el }}
+                >
+                  <h3 className={`blog-page__section-title ${visible ? 'visible' : ''}`} style={{ transitionDelay: `${sectionIndex * 0.1}s` }}>
+                    {section.categoryName}
+                    <span className="blog-page__section-count">{section.posts.length}</span>
+                  </h3>
+                  <div className="blog-page__grid">
+                    {section.posts.map((post: EnrichedPost, i: number) => (
+                      <PostCard 
+                        key={post.slug} 
+                        post={post} 
+                        index={i + sectionIndex * 10} 
+                        onVisibilityChange={handleVisibilityChange}
+                        postRef={(el) => { postRefs.current[post.slug] = el }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
+
+      {showBackToTop && (
+        <button className="blog-page__back-to-top" onClick={scrollToTop}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+        </button>
+      )}
     </section>
   )
 }

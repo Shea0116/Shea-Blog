@@ -12,7 +12,19 @@ const request: AxiosInstance = axios.create({
 
 // 响应拦截器：统一处理错误 + 直接返回 data
 request.interceptors.response.use(
-    (response) => response.data,  // 自动解包 .data，业务代码更清爽
+    (response) => {
+        // 处理后端返回的统一包装格式 {code, data, message}
+        const data = response.data
+        if (data && typeof data === 'object' && 'code' in data && 'data' in data) {
+            if (data.code === 200) {
+                return data.data
+            } else {
+                return Promise.reject(new Error(data.message || '请求失败'))
+            }
+        }
+        // 保持原有逻辑，兼容旧格式
+        return data
+    },
     (error: AxiosError<{ detail?: string }>) => {
         // 统一错误处理
         if (error.response) {

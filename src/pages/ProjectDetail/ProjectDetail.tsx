@@ -1,17 +1,40 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { projects, type Project } from '@/pages/Projects/Projects'
+import { getProjectBySlug } from '@/api/posts'
+import type { Project } from '@/api/types'
 import './ProjectDetail.css'
 
 export default function ProjectDetail() {
   const { slug } = useParams()
   const [visible, setVisible] = useState(false)
-
-  const project: Project | undefined = projects.find((p: Project) => p.slug === slug)
+  const [project, setProject] = useState<Project | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setVisible(true)
-  }, [])
+    if (slug) {
+      getProjectBySlug(slug)
+        .then((res) => {
+          setProject(res)
+          setLoading(false)
+        })
+        .catch(() => {
+          setLoading(false)
+        })
+    }
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className="project-detail-page">
+        <div className="project-detail-page__inner">
+          <div className="project-detail-not-found">
+            <p>加载中...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!project) {
     return (
@@ -36,15 +59,15 @@ export default function ProjectDetail() {
           <div className="project-detail-header__cover" style={{ background: project.gradient }}>
             <div className="project-detail-header__cover-overlay" />
             <div className="project-detail-header__cover-content">
-              <span className="project-detail-header__type">{project.highlight}</span>
+              <span className="project-detail-header__type">{project.summary}</span>
               <span className="project-detail-header__year">{project.year}</span>
             </div>
           </div>
           <div className="project-detail-header__info">
-            <h1 className="project-detail-header__title">{project.title}</h1>
+            <h1 className="project-detail-header__title">{project.name}</h1>
             <p className="project-detail-header__role">{project.role}</p>
             <div className="project-detail-header__tags">
-              {project.tags.map((t: string) => (
+              {project.techStack.map((t: string) => (
                 <span key={t} className="project-detail-header__tag">{t}</span>
               ))}
             </div>
@@ -54,7 +77,7 @@ export default function ProjectDetail() {
         <div className="project-detail-body">
           <section className="project-detail-section">
             <h2 className="project-detail-section__title">项目简介</h2>
-            <p className="project-detail-section__text">{project.desc}</p>
+            <p className="project-detail-section__text">{project.detail}</p>
           </section>
 
           {project.achievements && (
@@ -74,7 +97,7 @@ export default function ProjectDetail() {
           <section className="project-detail-section">
             <h2 className="project-detail-section__title">技术栈</h2>
             <div className="project-detail-tech-stack">
-              {project.tags.map((t: string) => (
+              {project.techStack.map((t: string) => (
                 <div key={t} className="project-detail-tech-item">
                   <span className="project-detail-tech-item__name">{t}</span>
                 </div>

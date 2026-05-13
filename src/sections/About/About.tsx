@@ -3,6 +3,8 @@ import emailjs from '@emailjs/browser'
 import './About.css'
 import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons';
 import favicon from '@/assets/favicon.svg'
+import { getAbout } from '@/api/posts'
+import type { About } from '@/api/types'
 
 // EmailJS 配置（通过环境变量注入）
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || ''
@@ -20,6 +22,11 @@ export default function About() {
   const [toast, setToast] = useState('')
 
   const [sending, setSending] = useState(false)
+  const [about, setAbout] = useState<About>()
+
+  useEffect(() => {
+    getAbout().then(setAbout)
+  }, [])
 
   const showToast = (msg: string) => {
     setToast(msg)
@@ -91,18 +98,15 @@ export default function About() {
             <h3 className="about__logo-title">关于我</h3>
           </div>
         </div>
-        
+
         <div className={`about__left ${visible ? 'visible' : ''}`}>
           <div className="section-label">About</div>
-          <p className="about__bio">
-            我是 Shea，一名前端开发工程师，目前就职于滴滴，曾就职于美团。3 年间从 ToB 企业系统到 ToC 大厂核心业务均有深度参与，
-            主导过 150+ 组件鸿蒙适配、医疗 SKU 招商系统等重点项目。熟练掌握 React / Vue 全家桶，拥有Node.js、Python、Java 全栈开发能力，具备 ArkTS、React Native 移动端开发能力，持续关注前端工程化与性能优化。
-          </p>
+          <p className="about__bio" dangerouslySetInnerHTML={{ __html: about?.about_me || '' }} />
 
           <div className="about__meta">
             <div className="about__meta-item">
               <span className="about__meta-label">📍 位置</span>
-              <span className="about__meta-value">北京</span>
+              <span className="about__meta-value">{about?.base_location}</span>
             </div>
             <div className="about__meta-item">
               <span className="about__meta-label">💼 角色</span>
@@ -110,12 +114,12 @@ export default function About() {
             </div>
             <div className="about__meta-item">
               <span className="about__meta-label">🎓 经验</span>
-              <span className="about__meta-value">3 年</span>
+              <span className="about__meta-value">{about?.experience} 年</span>
             </div>
-            {/* <div className="about__meta-item">
+            <div className="about__meta-item">
               <span className="about__meta-label">🏫 学历</span>
               <span className="about__meta-value">天津中德应用技术大学 · 本科</span>
-            </div> */}
+            </div>
           </div>
 
           <div className="about__tags">
@@ -136,7 +140,7 @@ export default function About() {
                 <label>姓名</label>
                 <input
                   type="text"
-                  placeholder="你的称呼"
+                  placeholder="您的称呼"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   onFocus={() => setFocusedField('name')}
@@ -159,7 +163,7 @@ export default function About() {
               <div className={`contact-field ${focusedField === 'message' ? 'focused' : ''}`}>
                 <label>消息</label>
                 <textarea
-                  placeholder="留下你的想法..."
+                  placeholder="留下您的想法..."
                   rows={3}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -170,7 +174,7 @@ export default function About() {
               </div>
               <button type="submit" className={`contact-submit ${sent ? 'sent' : ''} ${sending ? 'sending' : ''}`} disabled={sending}>
                 {sending ? '发送中...' : sent ? '已发送 ✓' : '发送消息'}
-                {!sent && !sending && <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                {!sent && !sending && <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
               </button>
             </form>
           </div>

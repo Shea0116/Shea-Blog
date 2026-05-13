@@ -24,3 +24,32 @@ export interface PostMeta {
 export interface PostDetail extends PostMeta {
   content: string
 }
+
+export interface About {
+  name: string
+  age: number
+  currentYear: number
+  experience: number
+  base_location: string
+  about_me: string
+}
+
+export interface Project {
+  id?: number
+  slug: string
+  name: string
+  summary: string
+  year: string
+  gradient: string
+  techStack: string[]
+  role: string
+  achievements: string[]
+  company: string
+  detail: string
+}
+
+export interface PostsApiResponse {
+  id: number
+  category: 'Frontend' | 'Backend' | 'Others'
+  posts: PostMeta[]
+}
