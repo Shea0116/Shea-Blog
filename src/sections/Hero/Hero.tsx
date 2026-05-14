@@ -75,19 +75,21 @@ export default function Hero({ isMobile }: HeroProps) {
           <h1 className="hero__title hero__title--en">
             <span style={{fontSize: '10rem'}}>Shea</span>
           </h1>
-          {/* <h1 className="hero__title hero__title--cn">
-            <CharReveal text="贤" baseDelay={0.32} />
-          </h1> */}
+          <h1 className="hero__title hero__title--cn">
+            <CharReveal text="贤" baseDelay={0.20} />
+          </h1>
         </div>
 
         {/* Animated rule */}
         <div className={`hero__rule ${loaded ? 'show' : ''}`} />
 
         {/* Subtitle */}
-        <p className={`hero__sub ${loaded ? 'show' : ''}`}>
+        {/* <p className={`hero__sub ${loaded ? 'show' : ''}`}>
           Frontend Developer&nbsp;&nbsp;·&nbsp;&nbsp;{about?.age}岁&nbsp;&nbsp;·&nbsp;&nbsp;{about?.experience}年经验&nbsp;&nbsp;·&nbsp;&nbsp;{about?.base_location}
+        </p> */}
+        <p className={`hero__sub ${loaded ? 'show' : ''}`}>
+          Frontend Developer&nbsp;&nbsp;·&nbsp;&nbsp;{about?.age}岁&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;{about?.base_location}
         </p>
-
         {/* CTA */}
         <div className={`hero__cta ${loaded ? 'show' : ''}`}>
           <a href="#projects" className="hero__btn hero__btn--primary">
