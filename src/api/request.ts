@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance } from 'axios'
 
 // 创建 axios 实例
 const request: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000',
+    baseURL: import.meta.env.VITE_API_BASE || 'https://blog-api-nu-one.vercel.app/',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
