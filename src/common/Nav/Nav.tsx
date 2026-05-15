@@ -5,7 +5,7 @@ import './Nav.css'
 const navLinks: { label: string; to: string }[] = [
   { label: '首页', to: '/' },
   { label: '博客', to: '/blog' },
-  { label: '项目', to: '/projects' },
+  // { label: '项目', to: '/projects' },
   { label: '收藏', to: '/favorites' },
   { label: '留言', to: '/guestbook' },
 ]
