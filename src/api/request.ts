@@ -3,7 +3,8 @@ import axios, { AxiosError, AxiosInstance } from 'axios'
 
 // 创建 axios 实例
 const request: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE || 'https://soulshea.xyz/api',
+    baseURL: import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000/api',
+    // baseURL: import.meta.env.VITE_API_BASE || 'https://soulshea.xyz/',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -13,17 +14,8 @@ const request: AxiosInstance = axios.create({
 // 响应拦截器：统一处理错误 + 直接返回 data
 request.interceptors.response.use(
     (response) => {
-        // 处理后端返回的统一包装格式 {code, data, message}
-        const data = response.data
-        if (data && typeof data === 'object' && 'code' in data && 'data' in data) {
-            if (data.code === 200) {
-                return data.data
-            } else {
-                return Promise.reject(new Error(data.message || '请求失败'))
-            }
-        }
-        // 保持原有逻辑，兼容旧格式
-        return data
+        // 直接返回原始响应数据，由调用方自行处理
+        return response.data
     },
     (error: AxiosError<{ detail?: string }>) => {
         // 统一错误处理

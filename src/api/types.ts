@@ -1,4 +1,15 @@
-// src/api/types.ts
+// ! 验证错误详情
+export interface ValidationErrorDetail {
+  loc: (string | number)[]
+  msg: string
+  type: string
+  input?: unknown
+  ctx?: Record<string, unknown>
+}
+
+export type ApiErrorResponse = {
+  detail: ValidationErrorDetail[]
+}
 
 /** 文章分类 */
 export interface Category {
@@ -53,3 +64,28 @@ export interface PostsApiResponse {
   category: 'Frontend' | 'Backend' | 'Others'
   posts: PostMeta[]
 }
+
+/** 留言功能 */
+// ? 获取指定留言详情信息
+export interface GetGuestsByIdData {
+  id: number
+}
+
+// ? 提交新留言
+export interface PostGuestsData {
+  id: number
+  nickname: string
+  content: string
+  created_at: string
+  is_pinned: boolean
+  pin_order?: number
+}
+
+// ? 更新留言的置顶状态和排序权重
+export interface PatchGuestPinData {
+  is_pinned: boolean
+  pin_order?: number
+}
+
+// ? 返回留言
+export type GetGuestsResponse = PostGuestsData 

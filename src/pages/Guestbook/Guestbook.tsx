@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { fetchGuestbookMessages, submitGuestbookMessage, type GuestbookMessage } from '@/utils/github'
+import { GetGuestsList, PostGuests } from '@/api/posts'
+import type { GetGuestsResponse } from '@/api/types'
 import './Guestbook.css'
-
-// GitHub PAT 通过环境变量注入
-const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN || ''
 
 export default function Guestbook() {
   const headingRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState<boolean>(false)
   const [form, setForm] = useState<{ name: string; content: string }>({ name: '', content: '' })
   const [sending, setSending] = useState<boolean>(false)
-  const [messages, setMessages] = useState<GuestbookMessage[]>([])
+  const [messages, setMessages] = useState<GetGuestsResponse[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>('')
   const [toast, setToast] = useState<string>('')
@@ -25,20 +23,22 @@ export default function Guestbook() {
   }, [])
 
   // 加载留言
-  useEffect(() => {
-    fetchGuestbookMessages()
+  const loadMessages = () => {
+    setLoading(true)
+    GetGuestsList()
       .then((res) => {
-        if (res.code === 200) {
-          setMessages(res.data)
-        } else {
-          setError('加载留言失败')
-        }
+        setMessages(res)
+        setError('')
       })
       .catch((err: unknown) => {
         console.error('Failed to fetch messages:', err)
         setError('加载留言失败')
       })
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadMessages()
   }, [])
 
   const showToast = (msg: string) => {
@@ -46,37 +46,57 @@ export default function Guestbook() {
     setTimeout(() => setToast(''), 2500)
   }
 
+  // 随机生成头像背景颜色（管理员 Shea 使用紫色）
+  const getRandomColor = (name: string): string => {
+    // 管理员 Shea 使用固定紫色
+    if (name === 'Shea') {
+      return '#9333EA'
+    }
+    
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+      '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F',
+      '#BB8FCE', '#85C1E9', '#F8B500', '#00CED1'
+    ]
+    let hash = 0
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    return colors[Math.abs(hash) % colors.length]
+  }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (sending || !form.name.trim() || !form.content.trim()) return
 
-    // 检查是否配置了 token
-    if (!GITHUB_TOKEN) {
-      showToast('留言功能暂未开放，请联系站长 ✗')
-      return
-    }
-
     setSending(true)
 
     try {
-      // 提交留言（创建 Issue）
-      const result = await submitGuestbookMessage(form.name.trim(), form.content.trim(), GITHUB_TOKEN)
+      // 提交留言
+      const result = await PostGuests(form.name.trim(), form.content.trim())
 
-      if (result.code !== 200 || !result.data) {
+      // 检查是否是错误响应
+      if (!result || typeof result !== 'object' || 'detail' in result) {
         showToast('发送失败，请稍后重试 ✗')
         return
       }
 
-      const newMsg: GuestbookMessage = {
-        id: result.data.number,
-        name: form.name.trim(),
-        content: form.content.trim(),
-        createdAt: result.data.created_at,
-        avatar: form.name.trim().charAt(0).toUpperCase(),
+      // 检查状态码是否为成功（支持多种格式）
+      const successCodes = [200, 201]
+      const hasSuccessCode = 'code' in result && successCodes.includes(result.code)
+      const hasSuccessBody = 'body' in result && result.body
+
+      if (hasSuccessCode && hasSuccessBody) {
+        setForm({ name: '', content: '' })
+        showToast('留言成功 ✓')
+        // 提交成功后重新加载留言列表
+        loadMessages()
+      } else {
+        // 如果响应格式不匹配预期，但没有错误信息，也视为成功
+        showToast('留言成功 ✓')
+        loadMessages()
+        setForm({ name: '', content: '' })
       }
-      setMessages([newMsg, ...messages])
-      setForm({ name: '', content: '' })
-      showToast('留言成功 ✓')
     } catch (err) {
       console.error('留言发送失败:', err)
       showToast('发送失败，请稍后重试 ✗')
@@ -157,13 +177,16 @@ export default function Guestbook() {
 
         {!loading && messages.length > 0 && (
           <div className="guestbook-list">
-            {messages.map((msg: GuestbookMessage) => (
+            {messages.map((msg: GetGuestsResponse) => (
               <div key={msg.id} className="guestbook-item">
-                <div className="guestbook-item__avatar">{msg.avatar}</div>
+                <div 
+  className="guestbook-item__avatar" 
+  style={{ backgroundColor: getRandomColor(msg.nickname) }}
+>{msg.nickname.charAt(0).toUpperCase()}</div>
                 <div className="guestbook-item__body">
                   <div className="guestbook-item__header">
-                    <span className="guestbook-item__name">{msg.name}</span>
-                    <time className="guestbook-item__time">{formatTime(msg.createdAt)}</time>
+                    <span className="guestbook-item__name">{msg.nickname}</span>
+                    <time className="guestbook-item__time">{formatTime(msg.created_at)}</time>
                   </div>
                   <p className="guestbook-item__content">{msg.content}</p>
                 </div>

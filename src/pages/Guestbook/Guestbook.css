@@ -116,7 +116,6 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background: var(--gradient-main);
   color: white;
   font-family: var(--font-display);
   font-size: 0.9rem;
