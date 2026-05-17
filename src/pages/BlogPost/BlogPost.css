@@ -693,3 +693,45 @@
     text-align: left;
   }
 }
+
+/* ── Obsidian Wikilink 内部链接 ── */
+.blog-post-content a.wikilink {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent);
+  transition: border-color 0.2s, color 0.2s;
+}
+.blog-post-content a.wikilink:hover {
+  border-bottom-style: solid;
+  color: #7c3aed;
+}
+.blog-post-content .wikilink--broken {
+  color: #999;
+  border-bottom: 1px dashed #ccc;
+  cursor: help;
+}
+
+/* ── 内嵌 HTML 内容样式（rehype-raw）── */
+.blog-post-content center {
+  text-align: center;
+  margin: 16px 0;
+}
+.blog-post-content font {
+  color: inherit;
+}
+.blog-post-content mark {
+  background: #fef9c3;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+.blog-post-content kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 0.8em;
+  font-family: var(--font-mono);
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 var(--gray-300);
+  line-height: 1.4;
+}

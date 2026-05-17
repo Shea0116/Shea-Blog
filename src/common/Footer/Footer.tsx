@@ -37,7 +37,8 @@ export default function Footer() {
             <img src={sheaLogo} alt="Shea" className="footer__logo" />
             <span className="footer__name">Shea</span>
           </div>
-          <p className="footer__tagline">Crafting delightful user experiences, one component at a time.</p>
+          {/* <p className="footer__tagline">Crafting delightful user experiences, one component at a time.</p> */}
+          <p className="footer__tagline">Every step is my journey.</p>
         </div>
 
         <div className="footer__divider" />

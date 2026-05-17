@@ -150,10 +150,10 @@ export default function ProjectsPreview() {
           ))}
         </div>
         <div className="projects__more">
-          <Link to="/projects" className="projects__more-btn">
+          {/* <Link to="/projects" className="projects__more-btn">
             查看全部项目
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </section>

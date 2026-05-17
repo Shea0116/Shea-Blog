@@ -19,11 +19,14 @@ export function processObsidianMarkdown(content: string, basePath: string = ''):
     }
   )
 
-  // 2. 转换 Obsidian wiki-link 双向链接: [[文件名]] → 文件名
+  // 2. 转换 Obsidian wiki-link 双向链接: [[标题]] → [标题](/__wikilink__/encoded标题)
+  //    使用 /__wikilink__/ 前缀，由自定义渲染器转换为内部 <Link>
   processed = processed.replace(
     /\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]/g,
-    (_match: string, filename: string, alias: string) => {
-      return alias || filename
+    (_match: string, title: string, alias: string) => {
+      const display = alias || title
+      const encoded = encodeURIComponent(title)
+      return `[${display}](/__wikilink__/${encoded})`
     }
   )
 

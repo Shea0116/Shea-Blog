@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import type { ReactNode } from 'react'
 import { fetchPostBySlug, fetchPosts, postImageList, postImageByPath } from '@/api/posts'
 import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown'
@@ -300,8 +301,9 @@ export default function BlogPost() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // 图片列表
+  // 图片列表 + 所有文章（用于 wikilink 解析）
   const [imageList, setImageList] = useState<PostImageResponseItem[]>([])
+  const [allPosts, setAllPosts] = useState<PostMeta[]>([])
   // 上一篇 / 下一篇
   const [prevPost, setPrevPost] = useState<PostMeta | null>(null)
   const [nextPost, setNextPost] = useState<PostMeta | null>(null)
@@ -371,9 +373,10 @@ export default function BlogPost() {
       .catch(() => setError('load_error'))
       .finally(() => setLoading(false))
 
-    // 上下篇
+    // 上下篇 + 保存全部文章列表（用于 wikilink）
     allPostsPromise.then(sections => {
       const flat = sections.flatMap((s: { posts: PostMeta[] }) => s.posts)
+      setAllPosts(flat)
       const idx = flat.findIndex((p: PostMeta) => p.slug === decodedSlug)
       if (idx > 0) setPrevPost(flat[idx - 1])
       if (idx >= 0 && idx < flat.length - 1) setNextPost(flat[idx + 1])
@@ -446,7 +449,21 @@ export default function BlogPost() {
         />
       )
     },
-  }), [imageList, handleLightboxOpen])
+    a: ({ href, children }: { href?: string; children?: ReactNode }) => {
+      const safeHref = String(href || '')
+      if (safeHref.startsWith('/__wikilink__/')) {
+        const encodedTitle = safeHref.replace('/__wikilink__/', '')
+        let title = ''
+        try { title = decodeURIComponent(encodedTitle) } catch { title = encodedTitle }
+        const targetPost = allPosts.find(p => p.title === title)
+        if (targetPost) {
+          return <Link to={`/blog/${encodeURIComponent(targetPost.slug)}`} className="wikilink">{children}</Link>
+        }
+        return <span className="wikilink wikilink--broken" title={`未找到文章: ${title}`}>{children}</span>
+      }
+      return <a href={safeHref} target="_blank" rel="noopener noreferrer">{children}</a>
+    },
+  }), [imageList, handleLightboxOpen, allPosts])
 
   // ── 渲染 ──
   if (loading) {
@@ -549,6 +566,7 @@ export default function BlogPost() {
         <article className="blog-post-content" ref={articleRef}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             components={mdComponents as any}
           >
