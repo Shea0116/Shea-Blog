@@ -1,6 +1,6 @@
 // src/api/posts.ts
 import request from './request'
-import type { Category, PostMeta, PostDetail, About, Project, PostsApiResponse, GetGuestsResponse, PostGuestsData, ApiErrorResponse, PatchGuestPinData } from './types'
+import type { Category, PostMeta, PostDetail, About, Project, PostsApiResponse, GetGuestsResponse, PostGuestsData, ApiErrorResponse, PatchGuestPinData, PostImageData, PostImageResponseItem } from './types'
 
 /** 获取所有公开分类 */
 export const fetchCategories = (): Promise<Category[]> => {
@@ -17,6 +17,16 @@ export const fetchPosts = (categorySlug?: string): Promise<PostsApiResponse[]> =
 /** 获取单篇文章详情 */
 export const fetchPostBySlug = (slug: string): Promise<PostDetail> => {
   return request.get(`/posts/${encodeURIComponent(slug)}`)
+}
+
+/** 获取文章图片列表 */
+export const postImageList = (data: PostImageData): Promise<PostImageResponseItem[]> => {
+  return request.post('/images', data)
+}
+
+/** 获取单个文章图片（path 以 query 参数传递，非 body） */
+export const postImageByPath = (path: string): Promise<{ code: number, body: { path: string, data: string }, message: string }> => {
+  return request.post('/images/base64', undefined, { params: { path } })
 }
 
 /** 获取关于信息 */

@@ -5,6 +5,22 @@ import { fetchPosts } from '@/api/posts'
 import type { PostMeta, PostsApiResponse } from '@/api/types'
 import './Blog.css'
 
+// ── 骨架卡片 ──────────────────────────────────────────────────
+function SkeletonCard({ index }: { index: number }) {
+  return (
+    <div className="blog-card-skeleton" style={{ animationDelay: `${index * 0.06}s` }}>
+      <div className="sk-cover" />
+      <div className="sk-body">
+        <div className="sk-line sk-line--meta" />
+        <div className="sk-line sk-line--title" />
+        <div className="sk-line sk-line--title sk-line--title-short" />
+        <div className="sk-line sk-line--excerpt" />
+        <div className="sk-line sk-line--excerpt sk-line--excerpt-short" />
+      </div>
+    </div>
+  )
+}
+
 // 渐变色列表，用于文章封面
 const gradients = [
   'linear-gradient(135deg, #6366f1, #7c3aed)',
@@ -122,6 +138,7 @@ export default function Blog() {
   const [showToc, setShowToc] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const postRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
 
@@ -186,6 +203,21 @@ export default function Blog() {
       .finally(() => setLoading(false))
   }, [])
 
+  // 搜索过滤
+  const filteredSections = searchQuery.trim()
+    ? categorySections
+        .map(section => ({
+          ...section,
+          posts: section.posts.filter(p =>
+            p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (p.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase())
+          ),
+        }))
+        .filter(section => section.posts.length > 0)
+    : categorySections
+
+  const totalFilteredPosts = filteredSections.reduce((n, s) => n + s.posts.length, 0)
+
   const scrollToSection = (category: string) => {
     setSelectedCategory(category)
   }
@@ -217,9 +249,10 @@ export default function Blog() {
         </div>
 
         {loading && (
-          <div className="blog-page__loading">
-            <div className="blog-page__spinner" />
-            <p>正在从 GitHub 加载文章...</p>
+          <div className="blog-page__skeleton-grid">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} index={i} />
+            ))}
           </div>
         )}
 
@@ -229,9 +262,45 @@ export default function Blog() {
           </div>
         )}
 
+        {/* 搜索框 */}
+        {!loading && categorySections.length > 0 && (
+          <div className="blog-page__search-wrap">
+            <div className="blog-page__search">
+              <svg className="blog-page__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="text"
+                className="blog-page__search-input"
+                placeholder="搜索文章..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button className="blog-page__search-clear" onClick={() => setSearchQuery('')}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              )}
+            </div>
+            {searchQuery && (
+              <p className="blog-page__search-result">
+                找到 <strong>{totalFilteredPosts}</strong> 篇文章
+              </p>
+            )}
+          </div>
+        )}
+
         {!loading && !error && categorySections.length === 0 && (
           <div className="blog-page__empty">
             <p>暂无文章，敬请期待 ✨</p>
+          </div>
+        )}
+
+        {!loading && searchQuery && totalFilteredPosts === 0 && (
+          <div className="blog-page__empty">
+            <p>没有找到包含「{searchQuery}」的文章</p>
           </div>
         )}
 
@@ -303,7 +372,7 @@ export default function Blog() {
             )}
 
             <div className="blog-page__sections">
-              {categorySections.map((section, sectionIndex) => (
+              {filteredSections.map((section, sectionIndex) => (
                 <div
                   key={section.category}
                   className="blog-page__section"

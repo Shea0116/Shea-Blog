@@ -11,15 +11,11 @@ export function processObsidianMarkdown(content: string, basePath: string = ''):
   let processed = content
 
   // 1. 转换 Obsidian wiki-link 图片语法: ![[image.png|width]] → 标准格式
-  //    由于图片在 GitHub 仓库中，转换为 GitHub raw URL
+  //    使用 /__obsidian__/ 前缀，由自定义渲染器通过 API 加载 base64 图片
   processed = processed.replace(
     /!\[\[([^\]|]+?)(?:\|(\d+))?\]\]/g,
-    (_match: string, filename: string, width: string) => {
-      const rawUrl = `https://raw.githubusercontent.com/Shea0116/Shea-Note/main/${basePath ? basePath + '/' : ''}${filename}`
-      if (width) {
-        return `![${filename}](${rawUrl}){width=${width}}`
-      }
-      return `![${filename}](${rawUrl})`
+    (_match: string, filename: string, _width: string) => {
+      return `![${filename}](/__obsidian__/${filename})`
     }
   )
 
