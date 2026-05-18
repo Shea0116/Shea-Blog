@@ -5,6 +5,7 @@ import { MailOutlined, GithubOutlined, WechatOutlined } from '@ant-design/icons'
 import favicon from '@/assets/favicon.svg'
 import { getAbout } from '@/api/posts'
 import type { About } from '@/api/types'
+import MagneticWrap from '@/common/MagneticWrap/MagneticWrap'
 
 // EmailJS 配置（通过环境变量注入）
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || ''
@@ -180,18 +181,24 @@ export default function About() {
           </div>
 
           <div className="about__socials">
-            <button className="social-link" onClick={() => copyToClipboard('zrdl15@163.com')}>
-              <MailOutlined className="social-link__icon" />
-              <span>Email</span>
-            </button>
-            <button className="social-link" onClick={() => copyToClipboard('https://github.com/Shea0116')}>
-              <GithubOutlined className="social-link__icon" />
-              <span>GitHub</span>
-            </button>
-            <button className="social-link" onClick={() => copyToClipboard('GavinShea')}>
-              <WechatOutlined className="social-link__icon" />
-              <span>WeChat</span>
-            </button>
+            <MagneticWrap strength={0.2}>
+              <button className="social-link" onClick={() => copyToClipboard('zrdl15@163.com')}>
+                <MailOutlined className="social-link__icon" />
+                <span>Email</span>
+              </button>
+            </MagneticWrap>
+            <MagneticWrap strength={0.2}>
+              <button className="social-link" onClick={() => copyToClipboard('https://github.com/Shea0116')}>
+                <GithubOutlined className="social-link__icon" />
+                <span>GitHub</span>
+              </button>
+            </MagneticWrap>
+            <MagneticWrap strength={0.2}>
+              <button className="social-link" onClick={() => copyToClipboard('GavinShea')}>
+                <WechatOutlined className="social-link__icon" />
+                <span>WeChat</span>
+              </button>
+            </MagneticWrap>
           </div>
         </div>
       </div>

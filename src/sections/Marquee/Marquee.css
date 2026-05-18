@@ -7,10 +7,25 @@
   position: relative;
 }
 
-/* Edge fade */
-.marquee::before,
+/* 中间发光线 */
 .marquee::after {
   content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 1px;
+  background: var(--gradient-main);
+  filter: blur(1px);
+  box-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Edge fade */
+.marquee__fade-left,
+.marquee__fade-right {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -18,11 +33,11 @@
   z-index: 1;
   pointer-events: none;
 }
-.marquee::before {
+.marquee__fade-left {
   left: 0;
   background: linear-gradient(to right, var(--marquee-fade), transparent);
 }
-.marquee::after {
+.marquee__fade-right {
   right: 0;
   background: linear-gradient(to left, var(--marquee-fade), transparent);
 }

@@ -1,0 +1,16 @@
+/* 圆形扩散主题切换动画 */
+.theme-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  background: var(--accent);
+  opacity: 0.15;
+  clip-path: circle(0% at var(--clip-x) var(--clip-y));
+  transition: clip-path 0s;
+}
+
+.theme-transition-overlay.expanding {
+  clip-path: circle(150% at var(--clip-x) var(--clip-y));
+  transition: clip-path 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}

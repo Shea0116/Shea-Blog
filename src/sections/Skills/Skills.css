@@ -92,6 +92,7 @@
   padding: 36px 32px;
   height: 100%;
   z-index: 1;
+  overflow: hidden;
 }
 /* Hover glow spot */
 .skill-card__content::before {
@@ -111,6 +112,19 @@
 }
 .skill-card:hover .skill-card__content::before {
   opacity: 0.06;
+}
+/* Shine sweep on hover */
+.skill-card__content::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--shine-color);
+  transform: translateX(-100%);
+  transition: transform 0.7s var(--ease-out);
+  pointer-events: none;
+}
+.skill-card:hover .skill-card__content::after {
+  transform: translateX(100%);
 }
 
 .skill-card__header {

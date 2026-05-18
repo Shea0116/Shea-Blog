@@ -10,6 +10,8 @@ const items: string[] = [
 export default function Marquee() {
   return (
     <section className="marquee">
+      <div className="marquee__fade-left" />
+      <div className="marquee__fade-right" />
       <div className="marquee__track">
         <div className="marquee__inner">
           {[...items, ...items, ...items, ...items].map((item, i) => (

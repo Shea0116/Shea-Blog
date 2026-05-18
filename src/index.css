@@ -164,6 +164,19 @@ html {
   scroll-behavior: smooth;
 }
 
+/* 主题切换过渡动画 */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              fill 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              stroke 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
 body {
   background-color: var(--body-bg);
   color: var(--gray-900);

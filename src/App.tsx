@@ -4,6 +4,8 @@ import Nav from '@/common/Nav/Nav'
 import Footer from '@/common/Footer/Footer'
 import CustomCursor from '@/common/CustomCursor/CustomCursor'
 import PageLoader from '@/common/PageLoader/PageLoader'
+import ParticleBackground from '@/common/ParticleBackground/ParticleBackground'
+import ThemeTransition from '@/common/ThemeTransition/ThemeTransition'
 import { ErrorBoundary } from '@/common/ErrorBoundary/ErrorBoundary'
 import Home from '@/pages/Home/Home'
 import Blog from '@/pages/Blog/Blog'
@@ -31,18 +33,29 @@ export default function App() {
     window.scrollTo(0, 0)
   }, [location.pathname])
 
-  // 主题切换
-  useEffect(() => {
-    if (theme === '') {
-      document.documentElement.removeAttribute('data-theme')
-    } else {
-      document.documentElement.setAttribute('data-theme', theme)
-    }
-    localStorage.setItem('theme', theme)
-  }, [theme])
-
+  // 主题切换 - 添加平滑过渡动画
   const toggleTheme = useCallback(() => {
-    setTheme(prev => prev === '' ? 'dark' : '')
+    const html = document.documentElement
+    html.classList.add('theme-transition')
+
+    // 短暂延迟后切换主题，让用户看到过渡效果
+    setTimeout(() => {
+      setTheme(prev => {
+        const newTheme = prev === '' ? 'dark' : ''
+        if (newTheme === '') {
+          html.removeAttribute('data-theme')
+        } else {
+          html.setAttribute('data-theme', newTheme)
+        }
+        localStorage.setItem('theme', newTheme)
+        return newTheme
+      })
+    }, 50)
+
+    // 动画结束后移除过渡类
+    setTimeout(() => {
+      html.classList.remove('theme-transition')
+    }, 550)
   }, [])
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -77,28 +90,40 @@ export default function App() {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
+  // 初始化主题
+  useEffect(() => {
+    if (theme === '') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+  }, [])
+
   return (
-    <div className="app">
-      <PageLoader onComplete={() => setLoaderDone(true)} />
-      <div className="scroll-progress" style={{ transform: `scaleX(${scrollProgress})` }} />
-      {!isMobile && <CustomCursor mouse={mouse} />}
-      <Nav theme={theme} toggleTheme={toggleTheme} />
-      <main>
-        {loaderDone && (
-          <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<Home isMobile={isMobile} />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/projects/:slug" element={<ProjectDetail />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/guestbook" element={<Guestbook />} />
-            </Routes>
-          </ErrorBoundary>
-        )}
-      </main>
-      <Footer />
-    </div>
+    <ThemeTransition isDark={theme === 'dark'}>
+      <div className="app">
+        <PageLoader onComplete={() => setLoaderDone(true)} />
+        <ParticleBackground />
+        <div className="scroll-progress" style={{ transform: `scaleX(${scrollProgress})` }} />
+        {!isMobile && <CustomCursor mouse={mouse} />}
+        <Nav theme={theme} toggleTheme={toggleTheme} />
+        <main>
+          {loaderDone && (
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<Home isMobile={isMobile} />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:slug" element={<ProjectDetail />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/guestbook" element={<Guestbook />} />
+              </Routes>
+            </ErrorBoundary>
+          )}
+        </main>
+        <Footer />
+      </div>
+    </ThemeTransition>
   )
 }
