@@ -32,6 +32,18 @@ export interface PostMeta {
   size: number
 }
 
+/** 附录数据 */
+export interface Appendix {
+  category_slug: string
+  category_name: string
+  documents: [{
+    slug: string
+    title: string
+  }]
+}
+
+
+
 // * 文章详情（带 Markdown 内容）
 export interface PostDetail extends PostMeta {
   content: string

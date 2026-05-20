@@ -130,7 +130,7 @@ function FloatingElements() {
 
 // 技能标签云
 function SkillTags() {
-  const skills = ['React', 'Vue3', 'TypeScript', 'ArkTS', 'Node.js', 'HarmonyOS']
+  const skills = ['React', 'Vue3', 'Node.js', 'JAVA', 'Python']
 
   return (
     <div className="hero__skill-tags">

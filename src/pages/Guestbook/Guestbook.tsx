@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { GetGuestsList, PostGuests } from '@/api/posts'
 import type { GetGuestsResponse } from '@/api/types'
+import spritesheetUrl from '@/assets/SheaSelf/spritesheet.webp'
 import './Guestbook.css'
 
 export default function Guestbook() {
@@ -52,9 +53,9 @@ export default function Guestbook() {
     if (name === 'Shea') {
       return '#9333EA'
     }
-    
+
     const colors = [
-      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
       '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F',
       '#BB8FCE', '#85C1E9', '#F8B500', '#00CED1'
     ]
@@ -123,11 +124,20 @@ export default function Guestbook() {
       {toast && <div className="toast">{toast}</div>}
       <div className="guestbook-page__inner">
         <div ref={headingRef} className="guestbook-page__heading">
-          <div className={`section-label ${visible ? 'visible' : ''}`}>Guestbook</div>
-          <h2 className={`section-title ${visible ? 'visible' : ''}`}>留言板</h2>
-          <p className={`section-desc ${visible ? 'visible' : ''}`}>
-            欢迎留下你的想法、建议或只是打个招呼
-          </p>
+          <div className="guestbook-page__heading-row">
+            <div className="guestbook-page__heading-text">
+              <div className={`section-label ${visible ? 'visible' : ''}`}>Guestbook</div>
+              <h2 className={`section-title ${visible ? 'visible' : ''}`}>留言板</h2>
+              <p className={`section-desc ${visible ? 'visible' : ''}`}>
+                欢迎留下你的想法、建议或只是打个招呼
+              </p>
+            </div>
+            <div
+              className={`guestbook-chibi ${visible ? 'visible' : ''}`}
+              aria-hidden="true"
+              style={{ backgroundImage: `url(${spritesheetUrl})` }}
+            />
+          </div>
         </div>
 
         {/* 留言表单 */}
@@ -179,10 +189,10 @@ export default function Guestbook() {
           <div className="guestbook-list">
             {messages.map((msg: GetGuestsResponse) => (
               <div key={msg.id} className="guestbook-item">
-                <div 
-  className="guestbook-item__avatar" 
-  style={{ backgroundColor: getRandomColor(msg.nickname) }}
->{msg.nickname.charAt(0).toUpperCase()}</div>
+                <div
+                  className="guestbook-item__avatar"
+                  style={{ backgroundColor: getRandomColor(msg.nickname) }}
+                >{msg.nickname.charAt(0).toUpperCase()}</div>
                 <div className="guestbook-item__body">
                   <div className="guestbook-item__header">
                     <span className="guestbook-item__name">{msg.nickname}</span>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { AppendixProvider } from '@/context/AppendixContext'
 import Nav from '@/common/Nav/Nav'
 import Footer from '@/common/Footer/Footer'
 import CustomCursor from '@/common/CustomCursor/CustomCursor'
@@ -109,17 +110,19 @@ export default function App() {
         <Nav theme={theme} toggleTheme={toggleTheme} />
         <main>
           {loaderDone && (
-            <ErrorBoundary>
-              <Routes>
-                <Route path="/" element={<Home isMobile={isMobile} />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/projects" element={<Projects />} />
-                <Route path="/projects/:slug" element={<ProjectDetail />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/guestbook" element={<Guestbook />} />
-              </Routes>
-            </ErrorBoundary>
+            <AppendixProvider>
+              <ErrorBoundary>
+                <Routes>
+                  <Route path="/" element={<Home isMobile={isMobile} />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/projects/:slug" element={<ProjectDetail />} />
+                  <Route path="/favorites" element={<Favorites />} />
+                  <Route path="/guestbook" element={<Guestbook />} />
+                </Routes>
+              </ErrorBoundary>
+            </AppendixProvider>
           )}
         </main>
         <Footer />

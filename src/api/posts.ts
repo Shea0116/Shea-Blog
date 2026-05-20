@@ -1,6 +1,6 @@
 // src/api/posts.ts
 import request from './request'
-import type { Category, PostMeta, PostDetail, About, Project, PostsApiResponse, GetGuestsResponse, PostGuestsData, ApiErrorResponse, PatchGuestPinData, PostImageData, PostImageResponseItem } from './types'
+import type { Category, PostMeta, PostDetail, About, Project, PostsApiResponse, GetGuestsResponse, PostGuestsData, ApiErrorResponse, PatchGuestPinData, PostImageData, PostImageResponseItem, Appendix } from './types'
 
 /** 获取所有公开分类 */
 export const fetchCategories = (): Promise<Category[]> => {
@@ -12,6 +12,11 @@ export const fetchPosts = (categorySlug?: string): Promise<PostsApiResponse[]> =
   return request.get('/posts', {
     params: categorySlug ? { category: categorySlug } : undefined,
   })
+}
+
+/** 获取附录数据 */
+export const getAppendixList = (): Promise<Appendix[]> => {
+  return request.get('/appendix')
 }
 
 /** 获取单篇文章详情 */

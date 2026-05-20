@@ -3,10 +3,13 @@ import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
+import rehypeHighlight from 'rehype-highlight'
+import 'highlight.js/styles/atom-one-dark.css'
 import type { ReactNode } from 'react'
 import { fetchPostBySlug, fetchPosts, postImageList, postImageByPath } from '@/api/posts'
 import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown'
 import type { PostDetail, PostMeta, PostImageResponseItem } from '@/api/types'
+import { useAppendix } from '@/context/AppendixContext'
 import './BlogPost.css'
 
 // ── 工具函数 ────────────────────────────────────────────────
@@ -301,6 +304,9 @@ export default function BlogPost() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // 从 Context 获取附录数据（全局共享，只加载一次）
+  const { appendixList } = useAppendix()
+
   // 图片列表 + 所有文章（用于 wikilink 解析）
   const [imageList, setImageList] = useState<PostImageResponseItem[]>([])
   const [allPosts, setAllPosts] = useState<PostMeta[]>([])
@@ -455,15 +461,33 @@ export default function BlogPost() {
         const encodedTitle = safeHref.replace('/__wikilink__/', '')
         let title = ''
         try { title = decodeURIComponent(encodedTitle) } catch { title = encodedTitle }
-        const targetPost = allPosts.find(p => p.title === title)
-        if (targetPost) {
-          return <Link to={`/blog/${encodeURIComponent(targetPost.slug)}`} className="wikilink">{children}</Link>
+
+        // 优先从附录列表中查找匹配的文章
+        let targetSlug: string | null = null
+        for (const category of appendixList) {
+          const doc = category.documents.find(d => d.title === title)
+          if (doc) {
+            targetSlug = doc.slug
+            break
+          }
+        }
+
+        // 如果附录中未找到，从普通文章列表中查找
+        if (!targetSlug) {
+          const targetPost = allPosts.find(p => p.title === title)
+          if (targetPost) {
+            targetSlug = targetPost.slug
+          }
+        }
+
+        if (targetSlug) {
+          return <Link to={`/blog/${encodeURIComponent(targetSlug)}`} className="wikilink">{children}</Link>
         }
         return <span className="wikilink wikilink--broken" title={`未找到文章: ${title}`}>{children}</span>
       }
       return <a href={safeHref} target="_blank" rel="noopener noreferrer">{children}</a>
     },
-  }), [imageList, handleLightboxOpen, allPosts])
+  }), [imageList, handleLightboxOpen, allPosts, appendixList])
 
   // ── 渲染 ──
   if (loading) {
@@ -566,7 +590,7 @@ export default function BlogPost() {
         <article className="blog-post-content" ref={articleRef}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
+            rehypePlugins={[rehypeRaw, rehypeHighlight]}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             components={mdComponents as any}
           >

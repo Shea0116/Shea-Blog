@@ -14,6 +14,42 @@
   margin-bottom: 48px;
 }
 
+.guestbook-page__heading-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.guestbook-page__heading-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Chibi Character ── */
+.guestbook-chibi {
+  width: 96px;
+  height: 104px;
+  flex-shrink: 0;
+  background-size: 768px 936px; /* 0.5× of 1536×1872 */
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: chibi-idle 0.9s steps(6) infinite;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+}
+.guestbook-chibi.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes chibi-idle {
+  from { background-position-x: 0; }
+  to   { background-position-x: -576px; } /* 6 frames × 96px */
+}
+
 /* ── Form ── */
 .guestbook-form {
   margin-bottom: 48px;
@@ -197,4 +233,14 @@
   .guestbook-page__inner { padding: 0 20px; }
   .guestbook-form { padding: 20px; }
   .guestbook-form__row { flex-direction: column; }
+  .guestbook-chibi {
+    width: 72px;
+    height: 78px;
+    background-size: 576px 702px; /* 0.375× */
+    animation: chibi-idle-sm 0.9s steps(6) infinite;
+  }
+  @keyframes chibi-idle-sm {
+    from { background-position-x: 0; }
+    to   { background-position-x: -432px; } /* 6 × 72px */
+  }
 }
