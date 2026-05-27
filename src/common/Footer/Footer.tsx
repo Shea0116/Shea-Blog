@@ -45,6 +45,7 @@ export default function Footer() {
 
         <div className="footer__bottom">
           <span className="footer__copy">© {new Date().getFullYear()} Shea. All rights reserved.</span>
+          <span className="footer__icp">京ICP备2026029710号</span>
           <div className="footer__links">
             <button onClick={() => copyToClipboard('zrdl15@163.com')}>Email</button>
             <button onClick={() => copyToClipboard('https://github.com/Shea0116')}>GitHub</button>
