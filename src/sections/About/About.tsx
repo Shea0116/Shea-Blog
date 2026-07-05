@@ -113,10 +113,10 @@ export default function About() {
               <span className="about__meta-label">💼 角色</span>
               <span className="about__meta-value">前端开发工程师</span>
             </div>
-            {/* <div className="about__meta-item">
+            <div className="about__meta-item">
               <span className="about__meta-label">🎓 经验</span>
               <span className="about__meta-value">{about?.experience} 年</span>
-            </div> */}
+            </div>
             <div className="about__meta-item">
               <span className="about__meta-label">🏫 学历</span>
               <span className="about__meta-value">天津中德应用技术大学 · 本科</span>

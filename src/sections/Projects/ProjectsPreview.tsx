@@ -36,24 +36,24 @@ const previewProjects: PreviewProject[] = [
     gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
     highlight: '美团',
   },
-  // {
-  //   slug: 'meituan-medical-sku',
-  //   title: '医疗商品 SKU 招商支撑系统',
-  //   tags: ['React', 'Next.js', 'React Hook Form', 'Mock.js'],
-  //   desc: '美团医疗团购核心招商系统，开发多 SKU 动态定价模块',
-  //   year: '2025',
-  //   gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
-  //   highlight: '美团',
-  // },
-  // {
-  //   slug: 'cicd-platform',
-  //   title: 'CI/CD 持续集成部署平台',
-  //   tags: ['Vue3', 'Element Plus', 'WebSocket', 'GoEasy'],
-  //   desc: '面向企业开发者的 CI/CD 平台，实现从代码提交到软件发布的全流程自动化',
-  //   year: '2024',
-  //   gradient: 'linear-gradient(135deg, #a78bfa, #c4b5fd)',
-  //   highlight: 'ToB',
-  // },
+  {
+    slug: 'meituan-medical-sku',
+    title: '医疗商品 SKU 招商支撑系统',
+    tags: ['React', 'Next.js', 'React Hook Form', 'Mock.js'],
+    desc: '美团医疗团购核心招商系统，开发多 SKU 动态定价模块',
+    year: '2025',
+    gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+    highlight: '美团',
+  },
+  {
+    slug: 'cicd-platform',
+    title: 'CI/CD 持续集成部署平台',
+    tags: ['Vue3', 'Element Plus', 'WebSocket', 'GoEasy'],
+    desc: '面向企业开发者的 CI/CD 平台，实现从代码提交到软件发布的全流程自动化',
+    year: '2024',
+    gradient: 'linear-gradient(135deg, #a78bfa, #c4b5fd)',
+    highlight: 'ToB',
+  },
 ]
 
 function ProjectCard({ project, index }: ProjectCardProps) {
@@ -150,10 +150,10 @@ export default function ProjectsPreview() {
           ))}
         </div>
         <div className="projects__more">
-          {/* <Link to="/projects" className="projects__more-btn">
+          <Link to="/projects" className="projects__more-btn">
             查看全部项目
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </Link> */}
+          </Link>
         </div>
       </div>
     </section>

@@ -53,8 +53,7 @@ export default function ProjectDetail() {
   return (
     <div className="project-detail-page">
       <div className={`project-detail-page__inner ${visible ? 'visible' : ''}`}>
-       {/* <Link to="/projects" className="project-detail-back">← 返回项目列表</Link> */}
-            <Link to="/" className="project-detail-back">← 返回首页</Link>
+        <Link to="/projects" className="project-detail-back">← 返回项目列表</Link>
 
         <header className="project-detail-header">
           <div className="project-detail-header__cover" style={{ background: project.gradient }}>
