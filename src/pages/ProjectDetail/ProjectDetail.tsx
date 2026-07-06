@@ -4,6 +4,28 @@ import { getProjectBySlug } from '@/api/posts'
 import type { Project } from '@/api/types'
 import './ProjectDetail.css'
 
+const isDetailSubtitle = (text: string) =>
+  text.length <= 20 && !/[，。！？；：,.!?;:]/.test(text)
+
+function ProjectDetailText({ detail }: { detail: string }) {
+  const lines = detail
+    .split('/d')
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  return (
+    <div className="project-detail-section__text">
+      {lines.map((line, index) => (
+        isDetailSubtitle(line) ? (
+          <strong key={index} className="project-detail-section__subtitle">{line}</strong>
+        ) : (
+          <p key={index} className="project-detail-section__paragraph">{line}</p>
+        )
+      ))}
+    </div>
+  )
+}
+
 export default function ProjectDetail() {
   const { slug } = useParams()
   const [visible, setVisible] = useState(false)
@@ -77,7 +99,7 @@ export default function ProjectDetail() {
         <div className="project-detail-body">
           <section className="project-detail-section">
             <h2 className="project-detail-section__title">项目简介</h2>
-            <p className="project-detail-section__text">{project.detail}</p>
+            <ProjectDetailText detail={project.detail} />
           </section>
 
           {project.achievements && (

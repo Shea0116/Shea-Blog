@@ -159,6 +159,25 @@
   font-family: var(--font-cn);
 }
 
+.project-detail-section__subtitle {
+  display: block;
+  color: var(--gray-900);
+  font-weight: 700;
+  margin: 18px 0 4px;
+}
+
+.project-detail-section__subtitle:first-child {
+  margin-top: 0;
+}
+
+.project-detail-section__paragraph {
+  margin: 0 0 8px;
+}
+
+.project-detail-section__paragraph:last-child {
+  margin-bottom: 0;
+}
+
 /* ── Achievements ── */
 .project-detail-achievements {
   list-style: none;
