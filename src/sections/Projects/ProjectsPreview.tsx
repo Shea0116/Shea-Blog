@@ -28,7 +28,7 @@ const previewProjects: PreviewProject[] = [
     highlight: '滴滴',
   },
   {
-      slug: "AgentHub",
+      slug: "Dify-AgentHub",
       title: "AgentHub · 企业级 LLM 应用开发平台",
       tags: ["React 19",
             "Next.js 15",
