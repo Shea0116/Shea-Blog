@@ -5,7 +5,7 @@ import axios, { AxiosError, AxiosInstance } from 'axios'
 const request: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000/api',
     // baseURL: import.meta.env.VITE_API_BASE || 'https://soulshea.xyz/',
-    timeout: 10000,
+    timeout: 60000,
     headers: {
         'Content-Type': 'application/json',
     },
