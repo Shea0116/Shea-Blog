@@ -53,29 +53,50 @@ interface EnrichedPost extends PostMeta {
 interface CategorySection {
   category: string
   categoryName: string
+  parentCategory: string
+  parentCategoryName: string
   posts: EnrichedPost[]
+}
+
+interface ParentCategorySection {
+  category: string
+  categoryName: string
+  sections: CategorySection[]
 }
 
 const PREVIEW_POST_COUNT = 4
 
-// 优先使用文章所在的父目录分类；根目录文章回退到接口分类。
+// class/category 是一级分类，path 的父目录是二级分类。
 function getPathCategory(post: PostMeta, fallbackCategory: string) {
+  const parentCategory = post.class || fallbackCategory || 'others'
+  const parentCategoryName = categoryNameMap[parentCategory.toLowerCase()] || parentCategory
   const normalizedPath = post.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '')
   const pathParts = normalizedPath.split('/').filter(Boolean)
 
   if (pathParts.length > 1) {
     const directoryParts = pathParts.slice(0, -1)
-    const categoryName = directoryParts[directoryParts.length - 1]
+    const pathCategoryName = directoryParts[directoryParts.length - 1]
+    const categoryName = pathCategoryName.toLowerCase() === parentCategory.toLowerCase()
+      ? '综合'
+      : pathCategoryName
     return {
-      category: `path:${directoryParts.join('/')}`,
+      category: `${parentCategory}:path:${directoryParts.join('/')}`,
       categoryName,
+      parentCategory,
+      parentCategoryName,
     }
   }
 
-  const category = post.category_slug || post.class || fallbackCategory || 'others'
+  const category = post.category_slug || 'uncategorized'
+  const apiCategoryName = post.category_name || category
+  const categoryName = apiCategoryName.toLowerCase() === parentCategory.toLowerCase()
+    ? '综合'
+    : apiCategoryName
   return {
-    category: `api:${category}`,
-    categoryName: post.category_name || categoryNameMap[category.toLowerCase()] || category,
+    category: `${parentCategory}:api:${category}`,
+    categoryName,
+    parentCategory,
+    parentCategoryName,
   }
 }
 
@@ -161,6 +182,7 @@ export default function Blog() {
   const [showToc, setShowToc] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
@@ -239,14 +261,35 @@ export default function Blog() {
   const hasSearchQuery = searchQuery.trim().length > 0
   const totalFilteredPosts = filteredSections.reduce((n, s) => n + s.posts.length, 0)
 
+  const groupByParent = (sections: CategorySection[]): ParentCategorySection[] => {
+    const parents = new Map<string, ParentCategorySection>()
+    sections.forEach(section => {
+      const existingParent = parents.get(section.parentCategory)
+      if (existingParent) existingParent.sections.push(section)
+      else {
+        parents.set(section.parentCategory, {
+          category: section.parentCategory,
+          categoryName: section.parentCategoryName,
+          sections: [section],
+        })
+      }
+    })
+    return Array.from(parents.values())
+  }
+
+  const parentCategorySections = groupByParent(categorySections)
+  const filteredParentSections = groupByParent(filteredSections)
+
   const scrollToSection = (category: string) => {
     setSelectedCategory(category)
+    setSelectedSubcategory(null)
   }
 
   const scrollToPost = (slug: string, category: string) => {
     setExpandedCategories(previous => new Set(previous).add(category))
     setShowToc(false)
     setSelectedCategory(null)
+    setSelectedSubcategory(null)
 
     window.setTimeout(() => {
       const post = postRefs.current[slug]
@@ -269,6 +312,13 @@ export default function Blog() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  const selectedParent = parentCategorySections.find(
+    section => section.category === selectedCategory
+  )
+  const selectedChild = selectedParent?.sections.find(
+    section => section.category === selectedSubcategory
+  )
 
   return (
     <section className="blog-page">
@@ -349,12 +399,12 @@ export default function Blog() {
 
             {showToc && (
               <>
-                <div className="blog-page__toc-overlay" onClick={() => { setShowToc(false); setSelectedCategory(null); }} />
+                <div className="blog-page__toc-overlay" onClick={() => { setShowToc(false); setSelectedCategory(null); setSelectedSubcategory(null); }} />
                 <div className="blog-page__toc-wrapper">
                   <div className={`blog-page__toc ${selectedCategory ? 'blog-page__toc--shrink' : ''}`}>
                     <div className="blog-page__toc-header">
                       <span>目录</span>
-                      <button className="blog-page__toc-close" onClick={() => { setShowToc(false); setSelectedCategory(null); }}>
+                      <button className="blog-page__toc-close" onClick={() => { setShowToc(false); setSelectedCategory(null); setSelectedSubcategory(null); }}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="18" y1="6" x2="6" y2="18" />
                           <line x1="6" y1="6" x2="18" y2="18" />
@@ -362,14 +412,16 @@ export default function Blog() {
                       </button>
                     </div>
                     <ul className="blog-page__toc-list">
-                      {categorySections.map((section) => (
+                      {parentCategorySections.map((section) => (
                         <li 
                           key={section.category} 
                           onClick={() => scrollToSection(section.category)}
                           className={selectedCategory === section.category ? 'active' : ''}
                         >
                           {section.categoryName}
-                          <span className="blog-page__toc-count">{section.posts.length}</span>
+                          <span className="blog-page__toc-count">
+                            {section.sections.reduce((total, child) => total + child.posts.length, 0)}
+                          </span>
                           <svg className="blog-page__toc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="9 18 15 12 9 6" />
                           </svg>
@@ -381,18 +433,29 @@ export default function Blog() {
                   {selectedCategory && (
                     <div className="blog-page__toc-sub">
                       <div className="blog-page__toc-sub-header">
-                        <button className="blog-page__toc-sub-back" onClick={() => setSelectedCategory(null)}>
+                        <button
+                          className="blog-page__toc-sub-back"
+                          onClick={() => selectedSubcategory ? setSelectedSubcategory(null) : setSelectedCategory(null)}
+                        >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="15 18 9 12 15 6" />
                           </svg>
                         </button>
-                        <span>{categorySections.find(s => s.category === selectedCategory)?.categoryName}</span>
+                        <span>{selectedChild?.categoryName || selectedParent?.categoryName}</span>
                       </div>
                       <ul className="blog-page__toc-sub-list">
-                        {categorySections
-                          .find(s => s.category === selectedCategory)
-                          ?.posts.map((post, index) => (
-                            <li key={post.slug} onClick={() => scrollToPost(post.slug, selectedCategory)}>
+                        {!selectedSubcategory && selectedParent?.sections.map((section, index) => (
+                          <li key={section.category} onClick={() => setSelectedSubcategory(section.category)}>
+                            <span className="blog-page__toc-sub-index">{index + 1}</span>
+                            <span className="blog-page__toc-sub-title">{section.categoryName}</span>
+                            <span className="blog-page__toc-count">{section.posts.length}</span>
+                            <svg className="blog-page__toc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                          </li>
+                        ))}
+                        {selectedChild?.posts.map((post, index) => (
+                            <li key={post.slug} onClick={() => scrollToPost(post.slug, selectedChild.category)}>
                               <span className="blog-page__toc-sub-index">{index + 1}</span>
                               <span className="blog-page__toc-sub-title">{post.title}</span>
                             </li>
@@ -405,57 +468,72 @@ export default function Blog() {
             )}
 
             <div className="blog-page__sections">
-              {filteredSections.map((section, sectionIndex) => {
-                const isExpanded = expandedCategories.has(section.category)
-                const displayedPosts = hasSearchQuery || isExpanded
-                  ? section.posts
-                  : section.posts.slice(0, PREVIEW_POST_COUNT)
-                const hasMore = section.posts.length > PREVIEW_POST_COUNT
-
-                return (
-                  <div
-                    key={section.category}
-                    className="blog-page__section"
-                    ref={(el) => { sectionRefs.current[section.category] = el }}
-                  >
-                    <div className="blog-page__section-header">
-                      <h3 className={`blog-page__section-title ${visible ? 'visible' : ''}`} style={{ transitionDelay: `${sectionIndex * 0.1}s` }}>
-                        {section.categoryName}
-                        <span className="blog-page__section-count">{section.posts.length}</span>
-                      </h3>
-                      {!hasSearchQuery && hasMore && (
-                        <span className="blog-page__section-preview-count">
-                          当前展示 {displayedPosts.length} 篇
-                        </span>
-                      )}
-                    </div>
-                    <div className="blog-page__grid">
-                      {displayedPosts.map((post: EnrichedPost, i: number) => (
-                      <PostCard 
-                        key={post.slug} 
-                        post={post} 
-                        index={i + sectionIndex * 10} 
-                        onVisibilityChange={handleVisibilityChange}
-                        postRef={(el) => { postRefs.current[post.slug] = el }}
-                      />
-                      ))}
-                    </div>
-                    {!hasSearchQuery && hasMore && (
-                      <button
-                        type="button"
-                        className="blog-page__section-toggle"
-                        onClick={() => toggleCategory(section.category)}
-                        aria-expanded={isExpanded}
-                      >
-                        {isExpanded ? '收起文章' : `查看全部 ${section.posts.length} 篇`}
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points={isExpanded ? '18 15 12 9 6 15' : '6 9 12 15 18 9'} />
-                        </svg>
-                      </button>
-                    )}
+              {filteredParentSections.map((parent, parentIndex) => (
+                <div key={parent.category} className="blog-page__parent">
+                  <div className="blog-page__parent-header">
+                    <span className="blog-page__parent-eyebrow">Category</span>
+                    <h2 className="blog-page__parent-title">
+                      {parent.categoryName}
+                      <span>
+                        {parent.sections.reduce((total, section) => total + section.posts.length, 0)} 篇
+                      </span>
+                    </h2>
                   </div>
-                )
-              })}
+                  <div className="blog-page__parent-groups">
+                    {parent.sections.map((section, sectionIndex) => {
+                      const isExpanded = expandedCategories.has(section.category)
+                      const displayedPosts = hasSearchQuery || isExpanded
+                        ? section.posts
+                        : section.posts.slice(0, PREVIEW_POST_COUNT)
+                      const hasMore = section.posts.length > PREVIEW_POST_COUNT
+
+                      return (
+                        <div
+                          key={section.category}
+                          className="blog-page__section"
+                          ref={(el) => { sectionRefs.current[section.category] = el }}
+                        >
+                          <div className="blog-page__section-header">
+                            <h3 className={`blog-page__section-title ${visible ? 'visible' : ''}`} style={{ transitionDelay: `${sectionIndex * 0.1}s` }}>
+                              {section.categoryName}
+                              <span className="blog-page__section-count">{section.posts.length}</span>
+                            </h3>
+                            {!hasSearchQuery && hasMore && (
+                              <span className="blog-page__section-preview-count">
+                                当前展示 {displayedPosts.length} 篇
+                              </span>
+                            )}
+                          </div>
+                          <div className="blog-page__grid">
+                            {displayedPosts.map((post: EnrichedPost, i: number) => (
+                              <PostCard
+                                key={post.slug}
+                                post={post}
+                                index={i + sectionIndex * 10 + parentIndex * 100}
+                                onVisibilityChange={handleVisibilityChange}
+                                postRef={(el) => { postRefs.current[post.slug] = el }}
+                              />
+                            ))}
+                          </div>
+                          {!hasSearchQuery && hasMore && (
+                            <button
+                              type="button"
+                              className="blog-page__section-toggle"
+                              onClick={() => toggleCategory(section.category)}
+                              aria-expanded={isExpanded}
+                            >
+                              {isExpanded ? '收起文章' : `查看全部 ${section.posts.length} 篇`}
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points={isExpanded ? '18 15 12 9 6 15' : '6 9 12 15 18 9'} />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </>
         )}
