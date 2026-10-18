@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { BLOG_URL } from '@/config/links'
 import './Nav.css'
 
-const navLinks: { label: string; to: string }[] = [
+const navLinks: { label: string; to: string; external?: boolean }[] = [
   { label: '首页', to: '/' },
-  { label: '博客', to: '/blog' },
+  { label: '博客', to: BLOG_URL, external: true },
   { label: '项目', to: '/projects' },
   { label: '收藏', to: '/favorites' },
   { label: '留言', to: '/guestbook' },
@@ -39,7 +40,11 @@ export default function Nav({ theme, toggleTheme }: NavProps) {
       </NavLink>
 
       <nav className="nav__links">
-        {navLinks.map((link) => (
+        {navLinks.map((link) => link.external ? (
+          <a key={link.to} href={link.to} target="_blank" rel="noopener noreferrer" className="nav__link" aria-label={`${link.label}（新标签页打开）`}>
+            {link.label}
+          </a>
+        ) : (
           <NavLink
             key={link.to}
             to={link.to}
@@ -88,7 +93,11 @@ export default function Nav({ theme, toggleTheme }: NavProps) {
       </button>
 
       <div className={`nav__mobile ${menuOpen ? 'open' : ''}`}>
-        {navLinks.map((link) => (
+        {navLinks.map((link) => link.external ? (
+          <a key={link.to} href={link.to} target="_blank" rel="noopener noreferrer" className="nav__mobile-link" aria-label={`${link.label}（新标签页打开）`} onClick={() => setMenuOpen(false)}>
+            {link.label}
+          </a>
+        ) : (
           <NavLink
             key={link.to}
             to={link.to}

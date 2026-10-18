@@ -94,6 +94,8 @@ export interface Project {
   achievements: string[]
   company: string
   detail: string
+  implementation?: { title: string; description: string }[]
+  challenges?: { title: string; problem: string; solution: string }[]
 }
 
 /** 留言功能 */
@@ -119,4 +121,4 @@ export interface PatchGuestPinData {
 }
 
 // ? 返回留言
-export type GetGuestsResponse = PostGuestsData 
+export type GetGuestsResponse = PostGuestsData

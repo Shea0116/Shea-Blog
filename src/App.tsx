@@ -9,7 +9,7 @@ import ParticleBackground from '@/common/ParticleBackground/ParticleBackground'
 import ThemeTransition from '@/common/ThemeTransition/ThemeTransition'
 import { ErrorBoundary } from '@/common/ErrorBoundary/ErrorBoundary'
 import Home from '@/pages/Home/Home'
-import Blog from '@/pages/Blog/Blog'
+import WikiTide from '@/pages/Blog/WikiTide'
 import BlogPost from '@/pages/BlogPost/BlogPost'
 import Projects from '@/pages/Projects/Projects'
 import ProjectDetail from '@/pages/ProjectDetail/ProjectDetail'
@@ -114,7 +114,7 @@ export default function App() {
               <ErrorBoundary>
                 <Routes>
                   <Route path="/" element={<Home isMobile={isMobile} />} />
-                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog" element={<WikiTide />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/projects" element={<Projects />} />
                   <Route path="/projects/:slug" element={<ProjectDetail />} />

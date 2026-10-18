@@ -102,6 +102,35 @@ export default function ProjectDetail() {
             <ProjectDetailText detail={project.detail} />
           </section>
 
+          {!!project.implementation?.length && (
+            <section className="project-detail-section">
+              <h2 className="project-detail-section__title">项目实现</h2>
+              <ol className="project-detail-section__items">
+                {project.implementation.map((item) => (
+                  <li key={item.title}>
+                    <h3 className="project-detail-section__subtitle">{item.title}</h3>
+                    <p className="project-detail-section__paragraph">{item.description}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
+          {!!project.challenges?.length && (
+            <section className="project-detail-section">
+              <h2 className="project-detail-section__title">项目难点与解决方案</h2>
+              <ol className="project-detail-section__items">
+                {project.challenges.map((item) => (
+                  <li key={item.title}>
+                    <h3 className="project-detail-section__subtitle">{item.title}</h3>
+                    <p className="project-detail-section__paragraph"><strong>问题：</strong>{item.problem}</p>
+                    <p className="project-detail-section__paragraph"><strong>解决：</strong>{item.solution}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
           {project.achievements && (
             <section className="project-detail-section">
               <h2 className="project-detail-section__title">核心成果</h2>
