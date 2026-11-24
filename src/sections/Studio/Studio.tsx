@@ -1,7 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowDownOutlined, ArrowRightOutlined, BookOutlined, CloseOutlined, DesktopOutlined, IdcardOutlined, MailOutlined, ReloadOutlined, StarOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
-import { BLOG_URL } from '@/config/links'
 import type { ExhibitId } from './studioModel'
 import type { createStudioView } from './studioView'
 import './Studio.css'
@@ -13,9 +12,9 @@ const exhibits = {
     action: '浏览项目', to: '/projects',
   },
   blog: {
-    name: '博客', object: '书架', title: '在 Wikitide 写作', icon: BookOutlined,
-    description: '在 Wikitide 阅读我的技术笔记和文章。',
-    action: '打开 Wikitide', href: BLOG_URL,
+    name: '博客', object: '书架', title: '技术博客', icon: BookOutlined,
+    description: '这里收录了我在前端、后端开发中写下的技术文章。',
+    action: '浏览文章', to: '/blog',
   },
   about: {
     name: '关于我', object: '墙上的画', title: '认识 Shea', icon: IdcardOutlined,
@@ -197,9 +196,7 @@ export default memo(function Studio({ day }: { day: boolean }) {
               <a
                 className="studio__primary"
                 href={detail.href}
-                onClick={() => close(detail.href === BLOG_URL)}
-                target={detail.href === BLOG_URL ? '_blank' : undefined}
-                rel={detail.href === BLOG_URL ? 'noopener noreferrer' : undefined}
+                onClick={() => close(false)}
               >
                 {detail.action} <ArrowRightOutlined />
               </a>

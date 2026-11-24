@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-// import { fetchAllPosts } from '@/utils/github'
 import { fetchPosts } from '@/api/posts'
 import type { PostMeta, PostsApiResponse } from '@/api/types'
+import { WIKITIDE_URL } from '@/config/links'
 import './Blog.css'
 
 // ── 骨架卡片 ──────────────────────────────────────────────────
@@ -103,11 +103,10 @@ function getPathCategory(post: PostMeta, fallbackCategory: string) {
 interface PostCardProps {
   post: EnrichedPost
   index: number
-  onVisibilityChange?: (index: number, isVisible: boolean) => void
   postRef?: (el: HTMLAnchorElement | null) => void
 }
 
-function PostCard({ post, index, onVisibilityChange, postRef }: PostCardProps) {
+function PostCard({ post, index, postRef }: PostCardProps) {
   const ref = useRef<HTMLAnchorElement>(null)
 
   useEffect(() => {
@@ -122,7 +121,6 @@ function PostCard({ post, index, onVisibilityChange, postRef }: PostCardProps) {
       ([e]) => {
         if (e.isIntersecting) {
           setVisible(true)
-          onVisibilityChange?.(index, true)
           obs.disconnect()
         }
       },
@@ -130,7 +128,7 @@ function PostCard({ post, index, onVisibilityChange, postRef }: PostCardProps) {
     )
     if (ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
-  }, [index, onVisibilityChange])
+  }, [])
 
   const gradient = gradients[index % gradients.length]
   const tags = inferTags(post.path)
@@ -140,15 +138,14 @@ function PostCard({ post, index, onVisibilityChange, postRef }: PostCardProps) {
       to={`/blog/${encodeURIComponent(post.slug)}`}
       ref={ref}
       className={`blog-card ${visible ? 'visible' : ''}`}
-      style={{ transitionDelay: `${index * 0.08}s` }}
     >
       <div className="blog-card__cover" style={{ background: gradient }}>
         <div className="blog-card__cover-overlay" />
-        <span className="blog-card__read-time">{post.readTime || '5 min'}</span>
+        {post.readTime && <span className="blog-card__read-time">{post.readTime}</span>}
       </div>
       <div className="blog-card__body">
         <div className="blog-card__meta">
-          <time className="blog-card__date">{post.date || '最近更新'}</time>
+          {post.date && <time className="blog-card__date">{post.date}</time>}
           <div className="blog-card__tags">
             {tags.map((t) => (
               <span key={t} className="blog-card__tag">{t}</span>
@@ -156,7 +153,7 @@ function PostCard({ post, index, onVisibilityChange, postRef }: PostCardProps) {
           </div>
         </div>
         <h3 className="blog-card__title">{post.title}</h3>
-        <p className="blog-card__excerpt">{post.excerpt || '点击阅读全文...'}</p>
+        {post.excerpt && <p className="blog-card__excerpt">{post.excerpt}</p>}
         <span className="blog-card__link">
           阅读全文
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -188,12 +185,6 @@ export default function Blog() {
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const postRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
 
-  const handleVisibilityChange = useCallback((index: number, isVisible: boolean) => {
-    if (isVisible) {
-      setShowBackToTop(true)
-    }
-  }, [])
-
   useEffect(() => {
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } },
@@ -221,7 +212,7 @@ export default function Blog() {
             const pathCategory = getPathCategory(post, item.category)
             const enrichedPost: EnrichedPost = {
               ...post,
-              excerpt: post.summary || '点击阅读全文...',
+              excerpt: post.summary,
             }
             const existingSection = sectionMap.get(pathCategory.category)
 
@@ -324,10 +315,9 @@ export default function Blog() {
     <section className="blog-page">
       <div className="blog-page__inner">
         <div ref={headingRef} className="blog-page__heading">
-          <div className={`section-label ${visible ? 'visible' : ''}`}>Blog</div>
-          <h2 className={`section-title ${visible ? 'visible' : ''}`}>技术博客</h2>
+          <h1 className={`section-title ${visible ? 'visible' : ''}`}>技术博客</h1>
           <p className={`section-desc ${visible ? 'visible' : ''}`}>
-            记录前端开发中的思考、实践与成长，文章同步自 Obsidian 笔记
+            前端、后端开发实践与技术笔记
           </p>
         </div>
 
@@ -355,12 +345,13 @@ export default function Blog() {
               <input
                 type="text"
                 className="blog-page__search-input"
+                aria-label="搜索文章"
                 placeholder="搜索文章..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button className="blog-page__search-clear" onClick={() => setSearchQuery('')}>
+                <button type="button" className="blog-page__search-clear" aria-label="清除搜索" onClick={() => setSearchQuery('')}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                   </svg>
@@ -510,7 +501,6 @@ export default function Blog() {
                                 key={post.slug}
                                 post={post}
                                 index={i + sectionIndex * 10 + parentIndex * 100}
-                                onVisibilityChange={handleVisibilityChange}
                                 postRef={(el) => { postRefs.current[post.slug] = el }}
                               />
                             ))}
@@ -537,6 +527,12 @@ export default function Blog() {
             </div>
           </>
         )}
+        <aside className="blog-page__library" aria-label="Wikitide 知识库">
+          <p>更多学习笔记和专题整理收录在 Wikitide。</p>
+          <a className="blog-page__external" href={WIKITIDE_URL} target="_blank" rel="noopener noreferrer" aria-label="打开 Wikitide 知识库（新标签页打开）">
+            打开 Wikitide 知识库
+          </a>
+        </aside>
       </div>
 
       {showBackToTop && (

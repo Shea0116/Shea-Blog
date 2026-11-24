@@ -64,6 +64,22 @@
   margin-bottom: 24px;
 }
 
+.blog-post-not-found__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+}
+
+.blog-post-not-found__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--gray-900);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 /* ── Header ── */
 .blog-post-header {
   margin-bottom: 48px;

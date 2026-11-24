@@ -43,6 +43,33 @@ const previewProjects: PreviewProject[] = [
       highlight: '滴滴',
   },
   {
+    slug: 'domscan',
+    title: 'DomScan',
+    tags: ['Swift', 'SwiftUI', 'Chromium CDP', 'WKWebView'],
+    desc: '拾取 macOS 界面元素，把样式、截图和修改备注整理为可分享的开发上下文。',
+    year: '2026',
+    gradient: 'linear-gradient(135deg, #205b74, #237267)',
+    highlight: '个人开源',
+  },
+  {
+    slug: 'wikitide',
+    title: '识汐 Wikitide',
+    tags: ['React', 'TypeScript', 'FastAPI', 'Flutter'],
+    desc: '整理 Markdown 和 PDF 资料，串联个人阅读、知识库问答与团队协作。',
+    year: '2026',
+    gradient: 'linear-gradient(135deg, #364ca0, #287c96)',
+    highlight: '个人开源',
+  },
+  {
+    slug: 'skillshub',
+    title: 'SkillsHub',
+    tags: ['React', 'TypeScript', 'Node.js', 'Hono'],
+    desc: '企业内部的 AI 技能管理平台，支持网页发现、技能发布和 CLI 分发。',
+    year: '2026',
+    gradient: 'linear-gradient(135deg, #7352a2, #4d5bbc)',
+    highlight: '滴滴',
+  },
+  {
     slug: 'meituan-harmonyos-adaptation',
     title: '营销平台鸿蒙适配与工程化建设',
     tags: ['ArkTS', 'HarmonyOS', 'React', 'MSI Bridge'],
@@ -156,7 +183,7 @@ export default function ProjectsPreview() {
           <div className={`section-label ${visible ? 'visible' : ''}`}>Selected Work</div>
           <h2 className={`section-title ${visible ? 'visible' : ''}`}>项目经历</h2>
           <p className={`section-desc ${visible ? 'visible' : ''}`}>
-            从大厂核心业务到企业级 ToB 系统，每个项目都是一次技术深度的突破
+            个人开源工具、知识库应用与工作中的产品实践
           </p>
         </div>
         <div className="projects__grid">

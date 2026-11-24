@@ -93,6 +93,15 @@ export default function ProjectDetail() {
                 <span key={t} className="project-detail-header__tag">{t}</span>
               ))}
             </div>
+            {!!project.links?.length && (
+              <div className="project-detail-header__links">
+                {project.links.map(({ label, url }) => (
+                  <a key={url} href={url} target="_blank" rel="noopener noreferrer" aria-label={`${label}（新标签页打开）`}>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </header>
 

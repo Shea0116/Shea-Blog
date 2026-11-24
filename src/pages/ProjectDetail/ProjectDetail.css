@@ -123,6 +123,23 @@
   gap: 8px;
 }
 
+.project-detail-header__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 18px;
+}
+
+.project-detail-header__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--gray-900);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .project-detail-header__tag {
   font-family: var(--font-display);
   font-size: 0.72rem;

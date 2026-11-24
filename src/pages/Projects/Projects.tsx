@@ -99,7 +99,7 @@ export default function Projects() {
           <div className={`section-label ${visible ? 'visible' : ''}`}>Selected Work</div>
           <h2 className={`section-title ${visible ? 'visible' : ''}`}>项目经历</h2>
           <p className={`section-desc ${visible ? 'visible' : ''}`}>
-            从大厂核心业务到企业级 ToB 系统，每个项目都是一次技术深度的突破
+            个人开源工具、知识库应用与工作中的产品实践
           </p>
         </div>
         <div className="projects-page__grid">

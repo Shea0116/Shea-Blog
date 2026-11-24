@@ -1,10 +1,13 @@
 // src/api/request.ts
 import axios, { AxiosError, AxiosInstance } from 'axios'
 
+const defaultApiBase = import.meta.env.PROD
+    ? 'https://blog-api-nu-one.vercel.app/api'
+    : 'http://127.0.0.1:8000/api'
+
 // 创建 axios 实例
 const request: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000/api',
-    // baseURL: import.meta.env.VITE_API_BASE || 'https://soulshea.xyz/',
+    baseURL: import.meta.env.VITE_API_BASE || defaultApiBase,
     timeout: 60000,
     headers: {
         'Content-Type': 'application/json',

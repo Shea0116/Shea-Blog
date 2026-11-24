@@ -1,1 +1,1 @@
-export const BLOG_URL = 'https://wikitide.soulshea.vip/'
+export const WIKITIDE_URL = 'https://wikitide.soulshea.vip/'

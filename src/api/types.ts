@@ -94,6 +94,7 @@ export interface Project {
   achievements: string[]
   company: string
   detail: string
+  links?: { label: string; url: string }[]
   implementation?: { title: string; description: string }[]
   challenges?: { title: string; problem: string; solution: string }[]
 }

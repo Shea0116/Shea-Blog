@@ -9,6 +9,7 @@ import type { ReactNode } from 'react'
 import { fetchPostBySlug, fetchPosts, postImageList, postImageByPath } from '@/api/posts'
 import { processObsidianMarkdown, estimateReadTime } from '@/utils/markdown'
 import type { PostDetail, PostMeta, PostImageResponseItem } from '@/api/types'
+import { WIKITIDE_URL } from '@/config/links'
 import { useAppendix } from '@/context/AppendixContext'
 import './BlogPost.css'
 
@@ -333,6 +334,7 @@ export default function BlogPost() {
     if (!decodedSlug) return
 
     setLoading(true)
+    setError('')
     setPost(null)
     setContent('')
     setImageList([])
@@ -500,28 +502,19 @@ export default function BlogPost() {
     )
   }
 
-  if (error === 'not_found' || !post) {
+  if (!post) {
     return (
       <div className="blog-post-page">
         <div className="blog-post-page__inner">
           <div className="blog-post-not-found">
-            <h2>文章未找到</h2>
-            <p>你访问的文章不存在或已被删除</p>
-            <Link to="/blog" className="blog-post-back">← 返回博客列表</Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error === 'load_error') {
-    return (
-      <div className="blog-post-page">
-        <div className="blog-post-page__inner">
-          <div className="blog-post-not-found">
-            <h2>加载失败</h2>
-            <p>无法加载文章内容，请稍后重试</p>
-            <Link to="/blog" className="blog-post-back">← 返回博客列表</Link>
+            <h2>{error === 'not_found' ? '文章未找到' : '暂时无法打开文章'}</h2>
+            <p>可以返回博客目录，或到 Wikitide 知识库搜索相关主题。</p>
+            <div className="blog-post-not-found__links">
+              <Link to="/blog">返回博客目录</Link>
+              <a href={WIKITIDE_URL} target="_blank" rel="noopener noreferrer" aria-label="打开 Wikitide 知识库（新标签页打开）">
+                打开 Wikitide 知识库
+              </a>
+            </div>
           </div>
         </div>
       </div>
