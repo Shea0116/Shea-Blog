@@ -28,6 +28,7 @@ export default function App() {
   const rafRef = useRef<number | null>(null)
   const pendingMouse = useRef({ x: -999, y: -999 })
   const location = useLocation()
+  const completeLoading = useCallback(() => setLoaderDone(true), [])
 
   // 路由切换时滚动到顶部
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function App() {
   return (
     <ThemeTransition isDark={theme === 'dark'}>
       <div className="app">
-        <PageLoader onComplete={() => setLoaderDone(true)} />
+        {!loaderDone && <PageLoader onComplete={completeLoading} />}
         <ParticleBackground />
         <div className="scroll-progress" style={{ transform: `scaleX(${scrollProgress})` }} />
         {!isMobile && <CustomCursor mouse={mouse} />}
@@ -113,7 +114,7 @@ export default function App() {
             <AppendixProvider>
               <ErrorBoundary>
                 <Routes>
-                  <Route path="/" element={<Home isMobile={isMobile} />} />
+                  <Route path="/" element={<Home isMobile={isMobile} day={theme === 'dark'} />} />
                   <Route path="/blog" element={<WikiTide />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/projects" element={<Projects />} />

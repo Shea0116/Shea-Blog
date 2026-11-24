@@ -295,5 +295,6 @@
 
 @media (max-width: 768px) {
   .about__inner { padding: 0 20px; }
+  .about__right:not(.visible) { transform: translateY(20px); }
   .about__socials { flex-wrap: wrap; }
 }

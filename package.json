@@ -21,12 +21,14 @@
     "react-router-dom": "^7.14.2",
     "rehype-highlight": "^7.0.2",
     "rehype-raw": "^7.0.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "three": "0.185.0"
   },
   "devDependencies": {
     "@types/node": "^25.7.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "0.185.0",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.12"
